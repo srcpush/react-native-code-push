@@ -3,8 +3,9 @@
 > NOTE
 >
 > Complete demos configured with "multi-deployment testing" feature are [here]:
-> *  **without using cocoa pods**: [link](https://github.com/microsoft/react-native-code-push/files/1259957/rncp976.copy.zip)
-> *  **using cocoa pods**: [link](https://github.com/microsoft/react-native-code-push/files/1172217/rncp893.copy.zip)
+>
+> * **without using cocoa pods**: [link](https://github.com/microsoft/react-native-code-push/files/1259957/rncp976.copy.zip)
+> * **using cocoa pods**: [link](https://github.com/microsoft/react-native-code-push/files/1172217/rncp893.copy.zip)
 
 Xcode allows you to define custom build settings for each "configuration" (like debug, release), which can then be referenced as the value of keys within the `Info.plist` file (like the `CodePushDeploymentKey` setting). This mechanism allows you to easily configure your builds to produce binaries, which are configured to synchronize with different CodePush deployments.
 
@@ -36,7 +37,7 @@ To set this up, perform the following steps:
 
    ![BuildFilesPath1](https://cloud.githubusercontent.com/assets/4928157/22645377/b1d7df0e-ec77-11e6-83c6-291a27bcdb17.png)
 
-   *NOTE: Due to https://github.com/facebook/react-native/issues/11813, we have to do this step to make it possible to use other configurations than Debug or Release on RN 0.40.0 or higher.*
+   *NOTE: Due to <https://github.com/facebook/react-native/issues/11813>, we have to do this step to make it possible to use other configurations than Debug or Release on RN 0.40.0 or higher.*
 
 8. Click the `+` button again on the toolbar and select `Add User-Defined Setting`
 
@@ -44,7 +45,7 @@ To set this up, perform the following steps:
 
     ![Setting Keys](https://cloud.githubusercontent.com/assets/8598682/16821919/fc1eac4a-490d-11e6-9b11-128129c24b80.png)
 
-    *NOTE: As a reminder, you can retrieve these keys by running `appcenter codepush deployment list -a <ownerName>/<appName> -k` from your terminal.*
+    *NOTE: As a reminder, you can retrieve these keys by running `srcpush deployment ls <appName> -k` from your terminal.*
 
 9. Open your project's `Info.plist` file and change the value of your `CodePushDeploymentKey` entry to `$(CODEPUSH_KEY)`
 
