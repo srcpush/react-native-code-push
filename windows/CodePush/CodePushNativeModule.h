@@ -12,8 +12,8 @@
 // Helper functions for reading and sending JsonValues to and from JavaScript
 namespace winrt::Microsoft::ReactNative
 {
-	void ReadValue(IJSValueReader const& reader, /*out*/ Windows::Data::Json::JsonObject& value) noexcept;
-	void ReadValue(IJSValueReader const& reader, /*out*/ Windows::Data::Json::IJsonValue& value) noexcept;
+	void ReadValue(IJSValueReader const &reader, /*out*/ Windows::Data::Json::JsonObject &value) noexcept;
+	void ReadValue(IJSValueReader const &reader, /*out*/ Windows::Data::Json::IJsonValue &value) noexcept;
 }
 
 namespace Microsoft::CodePush::ReactNative
@@ -37,7 +37,7 @@ namespace Microsoft::CodePush::ReactNative
 		};
 
 		static winrt::Windows::Foundation::IAsyncAction LoadBundle();
-		static void SetHost(const winrt::Microsoft::ReactNative::ReactNativeHost& host);
+		static void SetHost(const winrt::Microsoft::ReactNative::ReactNativeHost &host);
 
 		static winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Storage::StorageFile> GetBinaryBundleAsync();
 		static winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Storage::StorageFile> GetBundleFileAsync();
@@ -54,17 +54,17 @@ namespace Microsoft::CodePush::ReactNative
 		winrt::Windows::Data::Json::JsonObject GetRollbackInfo();
 		int GetRollbackCountForPackage(
 			std::wstring_view packageHash,
-			const winrt::Windows::Data::Json::JsonObject& latestRollbackInfo);
+			const winrt::Windows::Data::Json::JsonObject &latestRollbackInfo);
 
 		static bool IsPendingUpdate(std::wstring_view packageHash);
 
 		winrt::Windows::Foundation::IAsyncAction ClearDebugUpdates();
 
 		REACT_INIT(Initialize);
-		void Initialize(winrt::Microsoft::ReactNative::ReactContext const& reactContext) noexcept;
+		void Initialize(winrt::Microsoft::ReactNative::ReactContext const &reactContext) noexcept;
 
 		REACT_CONSTANT_PROVIDER(GetConstants);
-		void GetConstants(winrt::Microsoft::ReactNative::ReactConstantProvider& constants) noexcept;
+		void GetConstants(winrt::Microsoft::ReactNative::ReactConstantProvider &constants) noexcept;
 
 		/*
 		 * This is native-side of the JavaScript RemotePackage.download method
@@ -77,7 +77,7 @@ namespace Microsoft::CodePush::ReactNative
 
 		/*
 		 * This is the native side of the CodePush.getConfiguration method. It isn't
-		 * currently exposed via the "react-native-code-push" module, and is used
+		 * currently exposed via the "@srcpush/react-native-code-push" module, and is used
 		 * internally only by the CodePush.checkForUpdate method in order to get the
 		 * app version, as well as the deployment key that was configured in the Info.plist file.
 		 */
@@ -103,7 +103,7 @@ namespace Microsoft::CodePush::ReactNative
 			winrt::Microsoft::ReactNative::ReactPromise<void> promise) noexcept;
 
 		/*
-		 * This method isn't publicly exposed via the "react-native-code-push"
+		 * This method isn't publicly exposed via the "@srcpush/react-native-code-push"
 		 * module, and is only used internally to populate the RemotePackage.failedInstall property.
 		 */
 		REACT_METHOD(IsFailedUpdate, L"isFailedUpdate");
@@ -118,7 +118,7 @@ namespace Microsoft::CodePush::ReactNative
 		void GetLatestRollbackInfo(winrt::Microsoft::ReactNative::ReactPromise<winrt::Windows::Data::Json::IJsonValue> promise) noexcept;
 
 		/*
-		 * This method isn't publicly exposed via the "react-native-code-push"
+		 * This method isn't publicly exposed via the "@srcpush/react-native-code-push"
 		 * module, and is only used internally to populate the LocalPackage.isFirstRun property.
 		 */
 		REACT_METHOD(IsFirstRun, L"isFirstRun");
@@ -152,7 +152,7 @@ namespace Microsoft::CodePush::ReactNative
 		/*
 		 * This method clears CodePush's downloaded updates.
 		 * It is needed to switch to a different deployment if the current deployment is more recent.
-		 * Note: we don’t recommend to use this method in scenarios other than that (CodePush will call this method
+		 * Note: we donï¿½t recommend to use this method in scenarios other than that (CodePush will call this method
 		 * automatically when needed in other cases) as it could lead to unpredictable behavior.
 		 */
 		REACT_METHOD(ClearUpdates, L"clearUpdates");
@@ -181,43 +181,43 @@ namespace Microsoft::CodePush::ReactNative
 		void SaveStatusReportForRetry(winrt::Windows::Data::Json::JsonObject statusReport) noexcept;
 
 	private:
-		bool m_isFirstRunAfterUpdate{ false };
+		bool m_isFirstRunAfterUpdate{false};
 		static CodePushInstallMode s_installMode;
 
 		// Used to coordinate the dispatching of download progress events to JS.
-		uint64_t m_latestExpectedContentLength{ 0 };
-		uint64_t m_latestReceivedContentLength{ 0 };
-		bool m_didUpdateProgress{ false };
+		uint64_t m_latestExpectedContentLength{0};
+		uint64_t m_latestReceivedContentLength{0};
+		bool m_didUpdateProgress{false};
 
-		bool m_allowed{ true };
-		bool m_restartInProgress{ false };
+		bool m_allowed{true};
+		bool m_restartInProgress{false};
 		std::vector<uint8_t> m_restartQueue;
 
-		static constexpr std::wstring_view BundleExtension{ L".bundle" };
+		static constexpr std::wstring_view BundleExtension{L".bundle"};
 		static winrt::hstring s_javaScriptBundleFileName;
 
 		// These constants represent emitted events
-		static constexpr std::wstring_view DownloadProgressEvent{ L"CodePushDownloadProgress" };
+		static constexpr std::wstring_view DownloadProgressEvent{L"CodePushDownloadProgress"};
 
 		// These constants represent valid deployment statuses
-		static constexpr std::wstring_view DeploymentFailed{ L"DeploymentFailed" };
-		static constexpr std::wstring_view DeploymentSucceeded{ L"DeploymentSucceeded" };
+		static constexpr std::wstring_view DeploymentFailed{L"DeploymentFailed"};
+		static constexpr std::wstring_view DeploymentSucceeded{L"DeploymentSucceeded"};
 
 		// These keys represent the names we use to store data in LocalSettings
-		static constexpr std::wstring_view FailedUpdatesKey{ L"CODE_PUSH_FAILED_UPDATES" };
-		static constexpr std::wstring_view PendingUpdateKey{ L"CODE_PUSH_PENDING_UPDATE" };
+		static constexpr std::wstring_view FailedUpdatesKey{L"CODE_PUSH_FAILED_UPDATES"};
+		static constexpr std::wstring_view PendingUpdateKey{L"CODE_PUSH_PENDING_UPDATE"};
 
 		// These keys are already "namespaced" by the PendingUpdateKey, so
 		// their values don't need to be obfuscated to prevent collision with app data
-		static constexpr std::wstring_view PendingUpdateHashKey{ L"hash" };
-		static constexpr std::wstring_view PendingUpdateIsLoadingKey{ L"isLoading" };
+		static constexpr std::wstring_view PendingUpdateHashKey{L"hash"};
+		static constexpr std::wstring_view PendingUpdateIsLoadingKey{L"isLoading"};
 
 		// These keys are used to inspect/augment the metadata
 		// that is associated with an update's package.
-		static constexpr std::wstring_view AppVersionKey{ L"appVersion" };
-		static constexpr std::wstring_view BinaryBundleDateKey{ L"binaryDate" }; // The date of the BUILD -> the modified date of the executable
-		static constexpr std::wstring_view PackageHashKey{ L"packageHash" };
-		static constexpr std::wstring_view PackageIsPendingKey{ L"isPending" };
+		static constexpr std::wstring_view AppVersionKey{L"appVersion"};
+		static constexpr std::wstring_view BinaryBundleDateKey{L"binaryDate"}; // The date of the BUILD -> the modified date of the executable
+		static constexpr std::wstring_view PackageHashKey{L"packageHash"};
+		static constexpr std::wstring_view PackageIsPendingKey{L"isPending"};
 
 		static bool isRunningBinaryVersion;
 		static bool needToReportRollback;
@@ -226,10 +226,10 @@ namespace Microsoft::CodePush::ReactNative
 		winrt::Microsoft::ReactNative::ReactContext m_context;
 
 		// These keys represent the names we use to store information about the latest rollback
-		static constexpr std::wstring_view LatestRollbackInfoKey{ L"LATEST_ROLLBACK_INFO" };
-		static constexpr std::wstring_view LatestRollbackPackageHashKey{ L"packageHash" };
-		static constexpr std::wstring_view LatestRollbackTimeKey{ L"time" };
-		static constexpr std::wstring_view LatestRollbackCountKey{ L"count" };
+		static constexpr std::wstring_view LatestRollbackInfoKey{L"LATEST_ROLLBACK_INFO"};
+		static constexpr std::wstring_view LatestRollbackPackageHashKey{L"packageHash"};
+		static constexpr std::wstring_view LatestRollbackTimeKey{L"time"};
+		static constexpr std::wstring_view LatestRollbackCountKey{L"count"};
 
 		// Bool that keeps track of whether the app has been initialized at least once.
 		static bool s_initialized;
@@ -241,7 +241,7 @@ namespace Microsoft::CodePush::ReactNative
 		static void RemoveFailedUpdates();
 		static void RemovePendingUpdate();
 		winrt::Windows::Foundation::IAsyncAction RestartAppInternal(bool onlyIfUpdateIsPending);
-		void SaveFailedUpdate(winrt::Windows::Data::Json::JsonObject& failedPackage);
+		void SaveFailedUpdate(winrt::Windows::Data::Json::JsonObject &failedPackage);
 		void SavePendingUpdate(std::wstring_view packageHash, bool isLoading);
 	};
 }

@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native';
 
-import CodePush from "react-native-code-push";
+import CodePush from "@srcpush/react-native-code-push";
 
 class App extends Component<{}> {
   constructor() {
@@ -20,7 +20,7 @@ class App extends Component<{}> {
   }
 
   codePushStatusDidChange(syncStatus) {
-    switch(syncStatus) {
+    switch (syncStatus) {
       case CodePush.SyncStatus.CHECKING_FOR_UPDATE:
         this.setState({ syncMessage: "Checking for update." });
         break;
@@ -86,9 +86,9 @@ class App extends Component<{}> {
       this.codePushDownloadDidProgress.bind(this)
     );
   }
-  
+
   restartApp() {
-	  CodePush.restartApp();
+    CodePush.restartApp();
   }
 
   render() {
@@ -101,35 +101,35 @@ class App extends Component<{}> {
     }
 
     return (
-		<SafeAreaView>
-			<ScrollView>
-				<View style={styles.container}>
-					<Text style={styles.welcome}>
-					  Welcome to CodePush!
-					</Text>
-					<Text style={styles.welcome}>
-						Demo bundle
-					</Text>
-					<TouchableOpacity onPress={this.restartApp.bind(this)}>
-						<Text style={styles.syncButton}>Press to restart</Text>
-					</TouchableOpacity>
-					<TouchableOpacity onPress={this.sync.bind(this)}>
-					  <Text style={styles.syncButton}>Press for background sync</Text>
-					</TouchableOpacity>
-					<TouchableOpacity onPress={this.syncImmediate.bind(this)}>
-					  <Text style={styles.syncButton}>Press for dialog-driven sync</Text>
-					</TouchableOpacity>
-					{progressView}
-					<TouchableOpacity onPress={this.toggleAllowRestart.bind(this)}>
-					  <Text style={styles.restartToggleButton}>Restart { this.state.restartAllowed ? "allowed" : "forbidden"}</Text>
-					</TouchableOpacity>
-					<TouchableOpacity onPress={this.getUpdateMetadata.bind(this)}>
-					  <Text style={styles.syncButton}>Press for Update Metadata</Text>
-					</TouchableOpacity>
-					<Text style={styles.messages}>{this.state.syncMessage || ""}</Text>
-				</View>
-			</ScrollView>
-		</SafeAreaView>
+      <SafeAreaView>
+        <ScrollView>
+          <View style={styles.container}>
+            <Text style={styles.welcome}>
+              Welcome to CodePush!
+            </Text>
+            <Text style={styles.welcome}>
+              Demo bundle
+            </Text>
+            <TouchableOpacity onPress={this.restartApp.bind(this)}>
+              <Text style={styles.syncButton}>Press to restart</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.sync.bind(this)}>
+              <Text style={styles.syncButton}>Press for background sync</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.syncImmediate.bind(this)}>
+              <Text style={styles.syncButton}>Press for dialog-driven sync</Text>
+            </TouchableOpacity>
+            {progressView}
+            <TouchableOpacity onPress={this.toggleAllowRestart.bind(this)}>
+              <Text style={styles.restartToggleButton}>Restart {this.state.restartAllowed ? "allowed" : "forbidden"}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={this.getUpdateMetadata.bind(this)}>
+              <Text style={styles.syncButton}>Press for Update Metadata</Text>
+            </TouchableOpacity>
+            <Text style={styles.messages}>{this.state.syncMessage || ""}</Text>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     );
   }
 }
