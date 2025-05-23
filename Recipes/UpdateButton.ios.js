@@ -10,27 +10,27 @@ var {
 } = React;
 var Button = require('react-native-button');
 
-var CodePush = require('react-native-code-push');
+var CodePush = require('@srcpush/react-native-code-push');
 
 var UpdateButton = React.createClass({
-  getInitialState: function() {
+  getInitialState: function () {
     return {};
   },
-  componentDidMount: function() {
+  componentDidMount: function () {
     CodePush.checkForUpdate().done((update) => {
       if (update && !update.downloadURL) {
         this.setState({
-          update: update 
+          update: update
         });
       }
     });
   },
-  update: function() {
+  update: function () {
     this.state.update.download().done((newPackage) => {
       newPackage.install();
     });
   },
-  render: function() {
+  render: function () {
     var updateButton = null;
     if (this.state.update) {
       updateButton = <Button onPress={this.update}>Update</Button>;

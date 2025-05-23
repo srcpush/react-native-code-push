@@ -9,10 +9,10 @@ var {
   View,
 } = React;
 
-var CodePush = require('react-native-code-push');
+var CodePush = require('@srcpush/react-native-code-push');
 
 var UpdateOnStart = React.createClass({
-  componentDidMount: function() {
+  componentDidMount: function () {
     CodePush.checkForUpdate().done((update) => {
       if (update && update.downloadUrl) {
         update.download().done((newPackage) => {
@@ -21,7 +21,7 @@ var UpdateOnStart = React.createClass({
       }
     });
   },
-  render: function() {
+  render: function () {
     return (
       <View style={styles.container}>
         <Text>
