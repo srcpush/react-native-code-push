@@ -52,6 +52,6 @@ function findMainApplication() {
     }
 
     var nameParts = appName.split('.');
-    var searchPath = glob.sync("**/" + nameParts[nameParts.length - 1] + ".java", ignoreFolders)[0];
+    var searchPath = globSync("**/" + nameParts[nameParts.length - 1] + ".java", ignoreFolders)[0];
     return searchPath;
 }

@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "code-push": "4.2.3",
-    "glob": "^7.1.7",
+    "glob": "^13.0.1",
     "hoist-non-react-statics": "^3.3.2",
     "inquirer": "^8.1.5",
     "plist": "^3.0.4",
@@ -58,7 +58,6 @@
     "archiver": "latest",
     "body-parser": "latest",
     "code-push-plugin-testing-framework": "file:./code-push-plugin-testing-framework",
-    "del": "v6.0.0",
     "express": "^5.1.0",
     "mkdirp": "latest",
     "mocha": "^11.7.2",

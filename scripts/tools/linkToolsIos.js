@@ -5,7 +5,7 @@ var packageFile = require('../../../../package.json');
 
 var ignoreNodeModules = { ignore: "node_modules/**" };
 var ignoreNodeModulesAndPods = { ignore: ["node_modules/**", "ios/Pods/**"] };
-var appDelegatePaths = glob.sync("**/AppDelegate.+(mm|m)", ignoreNodeModules);
+var appDelegatePaths = glob.globSync ? glob.globSync("**/AppDelegate.+(mm|m)", ignoreNodeModules) : glob.sync("**/AppDelegate.+(mm|m)", ignoreNodeModules);
 
 exports.codePushHeaderImportStatement = `#import <CodePush/CodePush.h>`;
 exports.codePushHeaderImportStatementFormatted = `\n${this.codePushHeaderImportStatement}`;

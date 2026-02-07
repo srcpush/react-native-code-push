@@ -10,7 +10,6 @@ import { Platform, PluginTestingFramework, ProjectManager, setupTestRunScenario,
 
 import Q = require("q");
 
-import del = require("del");
 import {isOldArchitecture} from "code-push-plugin-testing-framework/script/testConfig";
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -245,7 +244,7 @@ class RNIOS extends Platform.IOS implements RNPlatform {
                     if (!RNIOS.iosFirstBuild[projectDirectory]) {
                         const iosBuildFolder = path.join(iOSProject, "build");
                         if (fs.existsSync(iosBuildFolder)) {
-                            del.sync([iosBuildFolder], { force: true });
+                            fs.rmSync(iosBuildFolder, { recursive: true, force: true });
                         }
                         RNIOS.iosFirstBuild[projectDirectory] = true;
                         return this.buildApp(projectDirectory);
@@ -306,7 +305,7 @@ class RNProjectManager extends ProjectManager {
      */
     public setupProject(projectDirectory: string, templatePath: string, appName: string, appNamespace: string, version?: string): Q.Promise<void> {
         if (fs.existsSync(projectDirectory)) {
-            del.sync([projectDirectory], { force: true });
+            fs.rmSync(projectDirectory, { recursive: true, force: true });
         }
         mkdirp.sync(projectDirectory);
 
@@ -375,7 +374,7 @@ class RNProjectManager extends ProjectManager {
         const bundlePath: string = path.join(bundleFolder, bundleName);
         const deferred = Q.defer<string>();
         fs.exists(bundleFolder, (exists) => {
-            if (exists) del.sync([bundleFolder], { force: true });
+            if (exists) fs.rmSync(bundleFolder, { recursive: true, force: true });
             mkdirp.sync(bundleFolder);
             deferred.resolve(undefined);
         });
