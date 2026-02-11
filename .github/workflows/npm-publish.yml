@@ -3,6 +3,10 @@ name: Node.js build and publish package
 on:
   release:
     types: [ created ]
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -24,6 +28,27 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org/
       - run: npm i
-      - run: npm publish
+      
+      - name: Publish Release
+        if: github.event_name == 'release'
+        run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+
+      - name: Publish Test Version
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          echo "Branch: $BRANCH_NAME"
+          
+          # Determine the new version
+          NEW_VERSION=$(node scripts/bump-version.js "$BRANCH_NAME")
+          echo "New Version: $NEW_VERSION"
+          
+          # Set the version in package.json
+          npm version $NEW_VERSION --no-git-tag-version
+          
+          # Publish with 'test' tag
+          npm publish --tag test
