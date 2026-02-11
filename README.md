@@ -1,8 +1,8 @@
-#### [Sign up With Source Push](https://console.srcpush.com/register) to use CodePush SDK
+#### [Sign up With Source Push](https://console.srcpush.com/register) to use Source Push SDK
 
 # React Native SDK for Source Push (CodePush compatible service)
 
-This plugin provides client-side integration for the [CodePush service](https://srcpush.com/), allowing you to easily add a dynamic update experience to your React Native app(s).
+This plugin provides client-side integration for the [Source Push service](https://srcpush.com/), allowing you to easily add a dynamic update experience to your React Native app(s).
 
 <!-- React Native Catalog -->
 
@@ -34,20 +34,20 @@ This plugin provides client-side integration for the [CodePush service](https://
 
 A React Native app is composed of JavaScript files and any accompanying [images](https://reactnative.dev/docs/image), which are bundled together by the [metro bundler](https://github.com/facebook/metro) and distributed as part of a platform-specific binary (i.e. an `.ipa` or `.apk` file). Once the app is released, updating either the JavaScript code (e.g. making bug fixes, adding new features) or image assets, requires you to recompile and redistribute the entire binary, which of course, includes any review time associated with the store(s) you are publishing to.
 
-The CodePush plugin helps get product improvements in front of your end users instantly, by keeping your JavaScript and images synchronized with updates you release to the CodePush server. This way, your app gets the benefits of an offline mobile experience, as well as the "web-like" agility of side-loading updates as soon as they are available. It's a win-win!
+The Source Push plugin helps get product improvements in front of your end users instantly, by keeping your JavaScript and images synchronized with updates you release to the Source Push server. This way, your app gets the benefits of an offline mobile experience, as well as the "web-like" agility of side-loading updates as soon as they are available. It's a win-win!
 
-In order to ensure that your end users always have a functioning version of your app, the CodePush plugin maintains a copy of the previous update, so that in the event that you accidentally push an update which includes a crash, it can automatically roll back. This way, you can rest assured that your newfound release agility won't result in users becoming blocked before you have a chance to roll back on the server. It's a win-win-win!
+In order to ensure that your end users always have a functioning version of your app, the Source Push plugin maintains a copy of the previous update, so that in the event that you accidentally push an update which includes a crash, it can automatically roll back. This way, you can rest assured that your newfound release agility won't result in users becoming blocked before you have a chance to roll back on the server. It's a win-win-win!
 
-*Note: Any product changes which touch native code (e.g. modifying your `AppDelegate.m`/`MainActivity.java` file, adding a new plugin) cannot be distributed via CodePush, and therefore, must be updated via the appropriate store(s).*
+*Note: Any product changes which touch native code (e.g. modifying your `AppDelegate.m`/`MainActivity.java` file, adding a new plugin) cannot be distributed via Source Push, and therefore, must be updated via the appropriate store(s).*
 
 ## Supported React Native platforms
 
 * iOS (7+)
 * Android (4.1+) on TLS 1.2 compatible devices
 
-We try our best to maintain backwards compatibility of our plugin with previous versions of React Native, but due to the nature of the platform, and the existence of breaking changes between releases, it is possible that you need to use a specific version of the CodePush plugin in order to support the exact version of React Native you are using. The following table outlines which CodePush plugin versions officially support the respective React Native versions:
+We try our best to maintain backwards compatibility of our plugin with previous versions of React Native, but due to the nature of the platform, and the existence of breaking changes between releases, it is possible that you need to use a specific version of the Source Push plugin in order to support the exact version of React Native you are using. The following table outlines which Source Push plugin versions officially support the respective React Native versions:
 
-| React Native version(s) | Supporting CodePush version(s)                                                              |
+| React Native version(s) | Supporting Source Push version(s)                                                              |
 |-------------------------|---------------------------------------------------------------------------------------------|
 | <v0.76                  | Use [microsoft/code-push-react-native](https://github.com/microsoft/react-native-code-push) |
 | v0.76, v0.77, 0.78      | v1.0+ *(Support both New and Old Architectures)*                                            |
@@ -56,7 +56,7 @@ We work hard to respond to new RN releases, but they do occasionally break us. W
 
 ### Supported Components
 
-When using the React Native assets system (i.e. using the `require("./foo.png")` syntax), the following list represents the set of core components (and props) that support having their referenced images and videos updated via CodePush:
+When using the React Native assets system (i.e. using the `require("./foo.png")` syntax), the following list represents the set of core components (and props) that support having their referenced images and videos updated via Source Push:
 
 | Component                                       | Prop(s)                                  |
 |-------------------------------------------------|------------------------------------------|
@@ -67,16 +67,16 @@ When using the React Native assets system (i.e. using the `require("./foo.png")`
 | `ToolbarAndroid` <br />*(React Native 0.21.0+)* | `actions[].icon`, `logo`, `overflowIcon` |
 | `Video`                                         | `source`                                 |
 
-The following list represents the set of components (and props) that don't currently support their assets being updated via CodePush, due to their dependency on static images and videos (i.e. using the `{ uri: "foo" }` syntax):
+The following list represents the set of components (and props) that don't currently support their assets being updated via Source Push, due to their dependency on static images and videos (i.e. using the `{ uri: "foo" }` syntax):
 
 | Component   | Prop(s)                                                              |
 |-------------|----------------------------------------------------------------------|
 | `SliderIOS` | `maximumTrackImage`, `minimumTrackImage`, `thumbImage`, `trackImage` |
 | `Video`     | `source`                                                             |
 
-As new core components are released, which support referencing assets, we'll update this list to ensure users know what exactly they can expect to update using CodePush.
+As new core components are released, which support referencing assets, we'll update this list to ensure users know what exactly they can expect to update using Source Push.
 
-*Note: CodePush only works with Video components when using `require` in the source prop. For example:*
+*Note: Source Push only works with Video components when using `require` in the source prop. For example:*
 
 ```javascript
 <Video source={require("./foo.mp4")} />
@@ -84,13 +84,13 @@ As new core components are released, which support referencing assets, we'll upd
 
 ## Getting Started
 
-After you've created an account on [Source Push](https://console.srcpush.com/register), you can start CodePush-ifying your React Native app by running the following command from within your app's root directory:
+After you've created an account on [Source Push](https://console.srcpush.com/register), you can start Source Push-ifying your React Native app by running the following command from within your app's root directory:
 
 ```shell
 npm install --save @srcpush/react-native-code-push
 ```
 
-As with all other React Native plugins, the integration experience is different for iOS and Android, so perform the following setup steps depending on which platform(s) you are targeting. Note, if you are targeting both platforms it is recommended to create separate CodePush applications for each platform.
+As with all other React Native plugins, the integration experience is different for iOS and Android, so perform the following setup steps depending on which platform(s) you are targeting. Note, if you are targeting both platforms it is recommended to create separate Source Push applications for each platform.
 
 *NOTE: This guide assumes you have used the `@react-native-community/cli init` command to initialize your React Native project.*
 
@@ -101,13 +101,13 @@ Then continue with installing the native module
 
 ## Plugin Usage
 
-With the CodePush plugin downloaded and linked, and your app asking CodePush where to get the right JS bundle from, the only thing left is to add the necessary code to your app to control the following policies:
+With the Source Push plugin downloaded and linked, and your app asking Source Push where to get the right JS bundle from, the only thing left is to add the necessary code to your app to control the following policies:
 
 1. When (and how often) to check for an update? (for example app start, in response to clicking a button in a settings page, periodically at some fixed interval)
 
 2. When an update is available, how to present it to the end user?
 
-The simplest way to do this is to "CodePush-ify" your app's root component. To do so, you can choose one of the following two options:
+The simplest way to do this is to "Source Push-ify" your app's root component. To do so, you can choose one of the following two options:
 
 * **Option 1: Wrap your root component with the `codePush` higher-order component:**
 

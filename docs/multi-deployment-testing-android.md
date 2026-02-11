@@ -4,7 +4,7 @@
 >
 > Complete demo configured with "multi-deployment testing" feature is [here](https://github.com/microsoft/react-native-code-push/files/1314118/rncp1004.zip).
 
-The [Android Gradle plugin](https://google.github.io/android-gradle-dsl/current/index.html) allows you to define custom config settings for each "build type" (like debug, release). This mechanism allows you to easily configure your debug builds to use your CodePush staging deployment key and your release builds to use your CodePush production deployment key.
+The [Android Gradle plugin](https://google.github.io/android-gradle-dsl/current/index.html) allows you to define custom config settings for each "build type" (like debug, release). This mechanism allows you to easily configure your debug builds to use your Source Push staging deployment key and your release builds to use your Source Push production deployment key.
 
 *NOTE: As a reminder, you can retrieve these keys by running `srcpush deployment ls <appName> -k` from your terminal.*
 
@@ -22,7 +22,7 @@ To set this up, perform the following steps:
         buildTypes {
             debug {
                 ...
-                // Note: CodePush updates should not be tested in Debug mode as they are overriden by the RN packager. However, because CodePush checks for updates in all modes, we must supply a key.
+                // Note: Source Push updates should not be tested in Debug mode as they are overriden by the RN packager. However, because Source Push checks for updates in all modes, we must supply a key.
                 resValue "string", "CodePushDeploymentKey", '""'
                 ...
             }

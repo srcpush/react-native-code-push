@@ -1,12 +1,12 @@
 ## Windows Setup
 
-Once you've acquired the CodePush plugin, you need to integrate it into the Visual Studio project of your React Native app and configure it correctly. To do this, take the following steps:
+Once you've acquired the Source Push plugin, you need to integrate it into the Visual Studio project of your React Native app and configure it correctly. To do this, take the following steps:
 
 ### Plugin Installation and Configuration for React Native Windows 0.63.6 version and above
 
 #### Plugin Installation (Windows-npx)
 
-Once the plugin has been downloaded, run `npx react-native autolink-windows` in your application's root directory to automatically add the CodePush c++ project to your application's windows solution file.
+Once the plugin has been downloaded, run `npx react-native autolink-windows` in your application's root directory to automatically add the Source Push c++ project to your application's windows solution file.
 
 #### Plugin Configuration (Windows)
 
@@ -78,7 +78,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 
 #### Plugin Configuration (Windows)
 
-After installing the plugin, you need to configure your app to consult CodePush for the location of your JS bundle, since it will "take control" of managing the current and all future versions. To do this, update the `MainReactNativeHost.cs` file to use CodePush via the following changes:
+After installing the plugin, you need to configure your app to consult Source Push for the location of your JS bundle, since it will "take control" of managing the current and all future versions. To do this, update the `MainReactNativeHost.cs` file to use Source Push via the following changes:
 
 ```c#
 ...
@@ -90,10 +90,10 @@ class MainReactNativeHost : ReactNativeHost
     // 2. Declare a private instance variable for the CodePushModule instance.
     private CodePushReactPackage codePushReactPackage;
 
-    // 3. Update the JavaScriptBundleFile property to initalize the CodePush runtime,
+    // 3. Update the JavaScriptBundleFile property to initalize the Source Push runtime,
     // specifying the right deployment key, then use it to return the bundle URL from
-    // CodePush instead of statically from the binary. If you don't already have your
-    // deployment key, you can run "appcenter codepush deployment list -a <ownerName>/<appName> -k" to retrieve it.
+    // Source Push instead of statically from the binary. If you don't already have your
+    // deployment key, you can run "srcpush deployment ls <appName> -k" to retrieve it.
     protected override string JavaScriptBundleFile
     {
         get

@@ -3,7 +3,7 @@
 * [Plugin Installation and Configuration for React Native 0.76 version and above](#plugin-installation-and-configuration-for-react-native-060-version-and-above-android)
 * [Code Signing setup](#code-signing-setup)
 
-In order to integrate CodePush into your Android project, please perform the following steps:
+In order to integrate Source Push into your Android project, please perform the following steps:
 
 ### Plugin Installation and Configuration for React Native 0.76 version and above (Android)
 
@@ -15,7 +15,7 @@ In order to integrate CodePush into your Android project, please perform the fol
     ...
     ```
 
-2. Update the `MainApplication` file to use CodePush via the following changes:
+2. Update the `MainApplication` file to use Source Push via the following changes:
 
    For React Native 0.76 and above: update the `MainApplication.kt`
 
@@ -35,7 +35,7 @@ In order to integrate CodePush into your Android project, please perform the fol
                 }
 
                // 2. Override the getJSBundleFile method in order to let
-               // the CodePush runtime determine where to get the JS
+               // the Source Push runtime determine where to get the JS
                // bundle location from on each app start
                override fun getJSBundleFile(): String {
                  return CodePush.getJSBundleFile() 
@@ -46,7 +46,7 @@ In order to integrate CodePush into your Android project, please perform the fol
 
 3. Add the Deployment key to `strings.xml`:
 
-   To let the CodePush runtime know which deployment it should query for updates, open your app's `strings.xml` file and
+   To let the Source Push runtime know which deployment it should query for updates, open your app's `strings.xml` file and
 add a new string named `CodePushDeploymentKey`, whose value is the key of the deployment you want to configure this app against
 (like the key for the `Staging` deployment for the `FooBar` app). You can retrieve this value by running `srcpush deployment ls <appName> -k`
 in the Source Push CLI (the `-k` or `--displayKeys` flag is necessary since keys aren't displayed by default) or take in [Source Push UI](https://console.srcpush.com/applications)
@@ -55,7 +55,7 @@ The "friendly name" is intended only for authenticated management usage from the
 
    ![Deployment list](https://cloud.githubusercontent.com/assets/116461/11601733/13011d5e-9a8a-11e5-9ce2-b100498ffb34.png)
 
-   In order to effectively make use of the `Staging` and `Production` deployments that were created along with your CodePush app, refer to the [multi-deployment testing](../README.md#multi-deployment-testing) docs below before actually moving your app's usage of CodePush into production.
+   In order to effectively make use of the `Staging` and `Production` deployments that were created along with your Source Push app, refer to the [multi-deployment testing](../README.md#multi-deployment-testing) docs below before actually moving your app's usage of Source Push into production.
 
    Your `strings.xml` should look like this:
 
@@ -68,11 +68,11 @@ The "friendly name" is intended only for authenticated management usage from the
 
    *Note: If you need to dynamically use a different deployment, you can also override your deployment key in JS code using [Code-Push options](./api-js.md#CodePushOptions)*
 
-In order to effectively make use of the `Staging` and `Production` deployments that were created along with your CodePush app, refer to the [multi-deployment testing](../README.md#multi-deployment-testing) docs below before actually moving your app's usage of CodePush into production.
+In order to effectively make use of the `Staging` and `Production` deployments that were created along with your Source Push app, refer to the [multi-deployment testing](../README.md#multi-deployment-testing) docs below before actually moving your app's usage of Source Push into production.
 
 ### Code Signing setup
 
-You can self sign bundles during release and verify its signature before installation of update. For more info about Code Signing please refer to [relevant code-push documentation section](https://github.com/microsoft/code-push/tree/v3.0.1/cli#code-signing).
+You can self sign bundles during release and verify its signature before installation of update. For more info about Code Signing please refer to [relevant Source Push documentation section](https://docs.srcpush.com).
 In order to use Public Key for Code Signing you need to do following steps:
 
 Add `CodePushPublicKey` string item to `/path_to_your_app/android/app/src/main/res/values/strings.xml`. It may look like this:

@@ -1,16 +1,16 @@
 ### Resource Configuration
 
-Since `autolinking` uses `react-native.config.js` to link plugins, constructors are specified in that file. But you can override custom variables to manage the CodePush plugin by placing these values in string resources.
+Since `autolinking` uses `react-native.config.js` to link plugins, constructors are specified in that file. But you can override custom variables to manage the Source Push plugin by placing these values in string resources.
 
 - **Public Key** - used for bundle verification in the Code Signing Feature. Please refer to [Code Signing](setup-android.md#code-signing-setup) section for more details about the Code Signing Feature.
-  To set the public key, you should add the content of the public key to `strings.xml` with name `CodePushPublicKey`. CodePush automatically gets this property and enables the Code Signing feature. For example:
+  To set the public key, you should add the content of the public key to `strings.xml` with name `CodePushPublicKey`. Source Push automatically gets this property and enables the Code Signing feature. For example:
 
   ```xml
   <string moduleConfig="true" name="CodePushPublicKey">your-public-key</string>
   ```
 
-- **Server Url** - used for specifying CodePush Server Url.
-  The Default value: "<https://api.srcpush.com>" is overridden by adding your path to `strings.xml` with name `CodePushServerUrl`. CodePush automatically gets this property and will use this path to send requests. For example:
+- **Server Url** - used for specifying Source Push Server Url.
+  The Default value: "<https://api.srcpush.com>" is overridden by adding your path to `strings.xml` with name `CodePushServerUrl`. Source Push automatically gets this property and will use this path to send requests. For example:
 
   ```xml
   <string moduleConfig="true" name="CodePushServerUrl">https://api.srcpush.com</string>
@@ -22,21 +22,21 @@ The Java API is made available by importing the `com.microsoft.codepush.react.Co
 
 #### CodePush
 
-Constructs the CodePush client runtime and represents the `ReactPackage` instance that you add to you app's list of packages.
+Constructs the Source Push client runtime and represents the `ReactPackage` instance that you add to you app's list of packages.
 
 ##### Constructors
 
-- **CodePush(String deploymentKey, Activity mainActivity)** - Creates a new instance of the CodePush runtime, that will be used to query the service for updates via the provided deployment key. The `mainActivity` parameter should always be set to `this` when configuring your React packages list inside the `MainActivity` class. This constructor puts the CodePush runtime into "release mode", so if you want to enable debugging behavior, use the following constructor instead.
+- **CodePush(String deploymentKey, Activity mainActivity)** - Creates a new instance of the Source Push runtime, that will be used to query the service for updates via the provided deployment key. The `mainActivity` parameter should always be set to `this` when configuring your React packages list inside the `MainActivity` class. This constructor puts the Source Push runtime into "release mode", so if you want to enable debugging behavior, use the following constructor instead.
 
-- **CodePush(String deploymentKey, Activity mainActivity, bool isDebugMode)** - Equivalent to the previous constructor but allows you to specify whether you want the CodePush runtime to be in debug mode or not. When using this constructor, the `isDebugMode` parameter should always be set to `BuildConfig.DEBUG` in order to stay synchronized with your build type. When putting CodePush into debug mode, the following behaviors are enabled:
+- **CodePush(String deploymentKey, Activity mainActivity, bool isDebugMode)** - Equivalent to the previous constructor but allows you to specify whether you want the Source Push runtime to be in debug mode or not. When using this constructor, the `isDebugMode` parameter should always be set to `BuildConfig.DEBUG` in order to stay synchronized with your build type. When putting Source Push into debug mode, the following behaviors are enabled:
 
-    1. Old CodePush updates aren't deleted from storage whenever a new binary is deployed to the emulator/device. This behavior enables you to deploy new binaries, without bumping the version during development, and without continuously getting the same update every time your app calls `sync`.
+    1. Old Source Push updates aren't deleted from storage whenever a new binary is deployed to the emulator/device. This behavior enables you to deploy new binaries, without bumping the version during development, and without continuously getting the same update every time your app calls `sync`.
 
-    2. The local cache that the React Native runtime maintains in debug mode is deleted whenever a CodePush update is installed. This ensures that when the app is restarted after an update is applied, you will see the expected changes. As soon as [this PR](https://github.com/facebook/react-native/pull/4738) is merged, we won't need to do this anymore.
+    2. The local cache that the React Native runtime maintains in debug mode is deleted whenever a Source Push update is installed. This ensures that when the app is restarted after an update is applied, you will see the expected changes. As soon as [this PR](https://github.com/facebook/react-native/pull/4738) is merged, we won't need to do this anymore.
 
 - **CodePush(String deploymentKey, Context context, boolean isDebugMode, Integer publicKeyResourceDescriptor)** - Equivalent to the previous constructor, but allows you to specify the public key resource descriptor needed to read public key content. Please refer to [Code Signing](setup-android.md#code-signing-setup) section for more details about the Code Signing Feature.
 
-- **CodePush(String deploymentKey, Context context, boolean isDebugMode, String serverUrl)** Constructor allows you to specify CodePush Server Url. The Default value: `"https://api.srcpush.com"` is overridden by value specified in `serverUrl`.
+- **CodePush(String deploymentKey, Context context, boolean isDebugMode, String serverUrl)** Constructor allows you to specify Source Push Server Url. The Default value: `"https://api.srcpush.com"` is overridden by value specified in `serverUrl`.
 
 ##### Public Methods
 
