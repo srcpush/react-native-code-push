@@ -81,5 +81,13 @@
       "postlink": "node node_modules/@srcpush/react-native-code-push/scripts/postlink/run",
       "postunlink": "node node_modules/@srcpush/react-native-code-push/scripts/postunlink/run"
     }
+  },
+  "codegenConfig": {
+    "name": "RNCodePush",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.microsoft.codepush.react"
+    }
   }
 }

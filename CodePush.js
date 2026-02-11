@@ -1,11 +1,11 @@
 import { AcquisitionManager as Sdk } from "code-push/script/acquisition-sdk";
 import { Alert } from "./AlertAdapter";
 import requestFetchAdapter from "./request-fetch-adapter";
-import { AppState, Platform } from "react-native";
+import { AppState, Platform, TurboModuleRegistry } from "react-native";
 import log from "./logging";
 import hoistStatics from 'hoist-non-react-statics';
 
-let NativeCodePush = require("react-native").NativeModules.CodePush;
+let NativeCodePush = (TurboModuleRegistry?.get('CodePush')) || require("react-native").NativeModules.CodePush;
 const PackageMixins = require("./package-mixins")(NativeCodePush);
 
 async function checkForUpdate(deploymentKey = null, handleBinaryVersionMismatchCallback = null) {

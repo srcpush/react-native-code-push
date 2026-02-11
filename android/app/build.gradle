@@ -40,6 +40,16 @@ android {
     defaultConfig {
         consumerProguardFiles 'proguard-rules.pro'
     }
+
+    sourceSets {
+        main {
+            if (IS_NEW_ARCHITECTURE_ENABLED) {
+                java.srcDirs += ['src/newarch/java']
+            } else {
+                java.srcDirs += ['src/oldarch/java']
+            }
+        }
+    }
 }
 
 dependencies {

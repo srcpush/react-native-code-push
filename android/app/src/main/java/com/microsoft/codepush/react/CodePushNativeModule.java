@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @OptIn(markerClass = UnstableReactNativeAPI.class)
-public class CodePushNativeModule extends BaseJavaModule {
+public class CodePushNativeModule extends CodePushNativeModuleSpec {
     private String mBinaryContentsHash = null;
     private String mClientUniqueId = null;
     private LifecycleEventListener mLifecycleEventListener = null;
@@ -82,6 +82,11 @@ public class CodePushNativeModule extends BaseJavaModule {
 
     @Override
     public Map<String, Object> getConstants() {
+        return getTypedExportedConstants();
+    }
+
+    @Override
+    public Map<String, Object> getTypedExportedConstants() {
         final Map<String, Object> constants = new HashMap<>();
 
         constants.put("codePushInstallModeImmediate", CodePushInstallMode.IMMEDIATE.getValue());
@@ -500,8 +505,9 @@ public class CodePushNativeModule extends BaseJavaModule {
         }
     }
 
+    @Override
     @ReactMethod
-    public void getUpdateMetadata(final int updateState, final Promise promise) {
+    public void getUpdateMetadata(final double updateState, final Promise promise) {
         AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -520,11 +526,11 @@ public class CodePushNativeModule extends BaseJavaModule {
                         currentUpdateIsPending = mSettingsManager.isPendingUpdate(currentHash);
                     }
 
-                    if (updateState == CodePushUpdateState.PENDING.getValue() && !currentUpdateIsPending) {
+                    if ((int)updateState == CodePushUpdateState.PENDING.getValue() && !currentUpdateIsPending) {
                         // The caller wanted a pending update
                         // but there isn't currently one.
                         promise.resolve(null);
-                    } else if (updateState == CodePushUpdateState.RUNNING.getValue() && currentUpdateIsPending) {
+                    } else if ((int)updateState == CodePushUpdateState.RUNNING.getValue() && currentUpdateIsPending) {
                         // The caller wants the running update, but the current
                         // one is pending, so we need to grab the previous.
                         JSONObject previousPackage = mUpdateManager.getPreviousPackage();
@@ -625,8 +631,9 @@ public class CodePushNativeModule extends BaseJavaModule {
         asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    @Override
     @ReactMethod
-    public void installUpdate(final ReadableMap updatePackage, final int installMode, final int minimumBackgroundDuration, final Promise promise) {
+    public void installUpdate(final ReadableMap updatePackage, final double installMode, final double minimumBackgroundDuration, final Promise promise) {
         AsyncTask<Void, Void, Void> asyncTask = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
@@ -640,17 +647,17 @@ public class CodePushNativeModule extends BaseJavaModule {
                         mSettingsManager.savePendingUpdate(pendingHash, /* isLoading */false);
                     }
 
-                    if (installMode == CodePushInstallMode.ON_NEXT_RESUME.getValue() ||
+                    if ((int)installMode == CodePushInstallMode.ON_NEXT_RESUME.getValue() ||
                         // We also add the resume listener if the installMode is IMMEDIATE, because
                         // if the current activity is backgrounded, we want to reload the bundle when
                         // it comes back into the foreground.
-                        installMode == CodePushInstallMode.IMMEDIATE.getValue() ||
-                        installMode == CodePushInstallMode.ON_NEXT_SUSPEND.getValue()) {
+                        (int)installMode == CodePushInstallMode.IMMEDIATE.getValue() ||
+                        (int)installMode == CodePushInstallMode.ON_NEXT_SUSPEND.getValue()) {
 
                         // Store the minimum duration on the native module as an instance
                         // variable instead of relying on a closure below, so that any
                         // subsequent resume-based installs could override it.
-                        CodePushNativeModule.this.mMinimumBackgroundDuration = minimumBackgroundDuration;
+                        CodePushNativeModule.this.mMinimumBackgroundDuration = (int)minimumBackgroundDuration;
 
                         if (mLifecycleEventListener == null) {
                             // Ensure we do not add the listener twice.
@@ -672,7 +679,7 @@ public class CodePushNativeModule extends BaseJavaModule {
                                     // the foreground, so explicitly wait for it to be backgrounded first
                                     if (lastPausedDate != null) {
                                         long durationInBackground = (new Date().getTime() - lastPausedDate.getTime()) / 1000;
-                                        if (installMode == CodePushInstallMode.IMMEDIATE.getValue()
+                                        if ((int)installMode == CodePushInstallMode.IMMEDIATE.getValue()
                                                 || durationInBackground >= CodePushNativeModule.this.mMinimumBackgroundDuration) {
                                             CodePushUtils.log("Loading bundle on resume");
                                             restartAppInternal(false);
@@ -686,8 +693,8 @@ public class CodePushNativeModule extends BaseJavaModule {
                                     // resumed, we can detect how long it was in the background.
                                     lastPausedDate = new Date();
 
-                                    if (installMode == CodePushInstallMode.ON_NEXT_SUSPEND.getValue() && mSettingsManager.isPendingUpdate(null)) {
-                                        appSuspendHandler.postDelayed(loadBundleRunnable, minimumBackgroundDuration * 1000);
+                                    if ((int)installMode == CodePushInstallMode.ON_NEXT_SUSPEND.getValue() && mSettingsManager.isPendingUpdate(null)) {
+                                        appSuspendHandler.postDelayed(loadBundleRunnable, (int)minimumBackgroundDuration * 1000);
                                     }
                                 }
 
@@ -700,7 +707,11 @@ public class CodePushNativeModule extends BaseJavaModule {
                         }
                     }
 
-                    promise.resolve("");
+                    if ((int)installMode == CodePushInstallMode.IMMEDIATE.getValue()) {
+                        loadBundle();
+                    }
+
+                    promise.resolve(null);
                 } catch(CodePushUnknownException e) {
                     CodePushUtils.log(e);
                     promise.reject(e);
@@ -822,13 +833,15 @@ public class CodePushNativeModule extends BaseJavaModule {
         mCodePush.clearUpdates();
     }
 
+    @Override
     @ReactMethod
     public void addListener(String eventName) {
         // Set up any upstream listeners or background tasks as necessary
     }
 
+    @Override
     @ReactMethod
-    public void removeListeners(Integer count) {
+    public void removeListeners(double count) {
         // Remove upstream listeners, stop unnecessary background tasks
     }
 
