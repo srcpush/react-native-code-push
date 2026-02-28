@@ -2,7 +2,7 @@ Microsoft CodePush Plugin for React Native
 
 Copyright (c) Microsoft Corporation
 
-All rights reserved. 
+All rights reserved.
 
 MIT License
 
