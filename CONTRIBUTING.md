@@ -4,7 +4,7 @@
 
 ### Environment setup
 
-`node.js` and `npm` are needed for using this project. `npm` comes bundled with the `node.js` installer. You can download the `node.js` installer here: https://nodejs.org/download/.
+`node.js` and `npm` are needed for using this project. `npm` comes bundled with the `node.js` installer. You can download the `node.js` installer here: <https://nodejs.org/download/>.
 
 Once you have installed `node.js` and `npm`, install the dev dependencies for the project.
 
@@ -15,19 +15,22 @@ npm install
 ### Using the plugin manually
 
 Follow these steps to test your modifications to the plugin manually:
+
 - clone this repository
 - install the dependencies
 
-	Navigate to the root folder from your command line console and run:
-	```
-	npm install
-	```
+ Navigate to the root folder from your command line console and run:
+ ```
+ npm install
+ ```
+
 - install the plugin in a React-Native project
 
-	Navigate to the root folder of your React-Native project from your command line console and run:
-	```
-	npm install local_path_to_your_clone_of_this_repo
-	```
+ Navigate to the root folder of your React-Native project from your command line console and run:
+ ```
+ npm install local_path_to_your_clone_of_this_repo
+ ```
+
 - configure the plugin using the steps in the README.md
 - build and run your app on an emulator or device
 
@@ -81,6 +84,7 @@ If you would like to pull the plugin from NPM rather than running the tests on t
 #### Default
 
 To run all of the unit tests on Android and iOS:
+
 ```
 npm run test
 ```
@@ -88,6 +92,7 @@ npm run test
 #### iOS
 
 To run all of the unit tests on iOS:
+
 ```
 npm run test:ios
 ```
@@ -95,6 +100,7 @@ npm run test:ios
 #### Android
 
 To run all of the unit tests on Android:
+
 ```
 npm run test:android
 ```
@@ -107,26 +113,31 @@ The platforms are ordered as follows, and ran in that order:
 android, ios
 
 To run the core unit tests on Android:
+
 ```
 CORE=true npm run test:android
 ```
 
 To run all of the unit tests on iOS and pull the plugin from NPM:
+
 ```
 NPM=true npm run test:ios
 ```
 
 To run all of the unit tests on Android and iOS without building first:
+
 ```
 npm run test:fast
 ```
 
 To run all of the unit tests on iOS and restart the emulators:
+
 ```
 CLEAN=true npm run test:ios
 ```
 
 To run the core unit tests on Android and pull the plugin from NPM:
+
 ```
 NPM=true CORE=true npm run test:android
 ```
