@@ -49,6 +49,14 @@
     "semver": "^7.3.5",
     "xcode": "3.0.1"
   },
+  "codegenConfig": {
+    "name": "SrcPushCodePushSpec",
+    "type": "modules",
+    "jsSrcsDir": "./src/specs",
+    "android": {
+      "javaPackageName": "com.microsoft.codepush.react"
+    }
+  },
   "devDependencies": {
     "@types/assert": "^1.5.2",
     "@types/mkdirp": "^1.0.1",

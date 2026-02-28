@@ -1,5 +1,9 @@
 apply plugin: "com.android.library"
 
+def safeExtGet(prop, fallback) {
+    return rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
 def isNewArchitectureEnabled() {
     // To opt-in for the New Architecture, you can either:
     // - Set `newArchEnabled` to true inside the `gradle.properties` file
@@ -22,27 +26,38 @@ def DEFAULT_MIN_SDK_VERSION = 16
 android {
     namespace "com.microsoft.codepush.react"
 
-    compileSdkVersion rootProject.hasProperty('compileSdkVersion') ? rootProject.compileSdkVersion : DEFAULT_COMPILE_SDK_VERSION
-    buildToolsVersion rootProject.hasProperty('buildToolsVersion') ? rootProject.buildToolsVersion : DEFAULT_BUILD_TOOLS_VERSION
+    compileSdkVersion safeExtGet("compileSdkVersion", DEFAULT_COMPILE_SDK_VERSION)
+    buildToolsVersion safeExtGet("buildToolsVersion", DEFAULT_BUILD_TOOLS_VERSION)
+
+    buildFeatures {
+        buildConfig true
+    }
 
     defaultConfig {
-        minSdkVersion rootProject.hasProperty('minSdkVersion') ? rootProject.minSdkVersion : DEFAULT_MIN_SDK_VERSION
-        targetSdkVersion rootProject.hasProperty('targetSdkVersion') ? rootProject.targetSdkVersion : DEFAULT_TARGET_SDK_VERSION
+        minSdkVersion safeExtGet("minSdkVersion", DEFAULT_MIN_SDK_VERSION)
+        targetSdkVersion safeExtGet("targetSdkVersion", DEFAULT_TARGET_SDK_VERSION)
         versionCode 1
         versionName "1.0"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", IS_NEW_ARCHITECTURE_ENABLED.toString()
+        consumerProguardFiles 'proguard-rules.pro'
+    }
+
+    sourceSets {
+        main {
+            if (IS_NEW_ARCHITECTURE_ENABLED) {
+                java.srcDirs += ["src/newarch/java"]
+            } else {
+                java.srcDirs += ["src/oldarch/java"]
+            }
+        }
     }
 
     lintOptions {
         abortOnError false
     }
-
-    defaultConfig {
-        consumerProguardFiles 'proguard-rules.pro'
-    }
 }
 
 dependencies {
-    implementation "com.facebook.react:react-native:+"
+    implementation("com.facebook.react:react-android")
     implementation 'com.nimbusds:nimbus-jose-jwt:9.37.3'
 }
