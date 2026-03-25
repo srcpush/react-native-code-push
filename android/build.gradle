@@ -1,9 +1,7 @@
+import groovy.json.JsonSlurper
+
 buildscript {
     ext {
-        buildToolsVersion = "35.0.0"
-        minSdkVersion = 24
-        compileSdkVersion = 35
-        targetSdkVersion = 35
         kotlinVersion = "1.9.24"
     }
     repositories {
@@ -16,10 +14,93 @@ buildscript {
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-        mavenLocal()
+apply plugin: "com.android.library"
+
+def safeExtGet(prop, fallback) {
+    return rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
+def DEFAULT_COMPILE_SDK_VERSION = 26
+def DEFAULT_TARGET_SDK_VERSION = 26
+def DEFAULT_MIN_SDK_VERSION = 16
+
+def findReactNativePackageJson() {
+    File currentDir = projectDir
+
+    while (currentDir != null) {
+        File packageJson = new File(currentDir, "node_modules/react-native/package.json")
+        if (packageJson.exists()) {
+            return packageJson
+        }
+
+        currentDir = currentDir.parentFile
     }
+
+    return null
+}
+
+def getReactNativeVersion() {
+    File packageJson = findReactNativePackageJson()
+    if (packageJson == null) {
+        return null
+    }
+
+    def version = new JsonSlurper().parseText(packageJson.text).version
+    return version.tokenize("-")[0]
+}
+
+def getReactNativeMinorVersion() {
+    def reactNativeVersion = getReactNativeVersion()
+    if (reactNativeVersion == null) {
+        return null
+    }
+
+    def versionParts = reactNativeVersion.tokenize(".")
+    if (versionParts.size() < 2) {
+        return null
+    }
+
+    return versionParts[1].toInteger()
+}
+
+def reactNativeVersion = getReactNativeVersion()
+def reactNativeMinorVersion = getReactNativeMinorVersion()
+def reactNativeDependency = reactNativeMinorVersion != null && reactNativeMinorVersion < 71
+    ? "com.facebook.react:react-native:${reactNativeVersion ?: '+'}"
+    : "com.facebook.react:react-android:${reactNativeVersion ?: '+'}"
+
+android {
+    if (project.android.hasProperty("namespace")) {
+        namespace "com.microsoft.codepush.react"
+    }
+
+    compileSdkVersion safeExtGet("compileSdkVersion", DEFAULT_COMPILE_SDK_VERSION)
+
+    defaultConfig {
+        minSdkVersion safeExtGet("minSdkVersion", DEFAULT_MIN_SDK_VERSION)
+        targetSdkVersion safeExtGet("targetSdkVersion", DEFAULT_TARGET_SDK_VERSION)
+        versionCode 1
+        versionName "1.0"
+        consumerProguardFiles "proguard-rules.pro"
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation(reactNativeDependency)
+    implementation "com.nimbusds:nimbus-jose-jwt:9.37.3"
 }
