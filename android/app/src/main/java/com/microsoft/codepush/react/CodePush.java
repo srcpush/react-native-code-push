@@ -69,7 +69,7 @@ public class CodePush implements ReactPackage {
         return mServerUrl;
     }
 
-    private CodePush(String deploymentKey, Context context, boolean isDebugMode) {
+    public CodePush(String deploymentKey, Context context, boolean isDebugMode) {
         mContext = context.getApplicationContext();
 
         mUpdateManager = new CodePushUpdateManager(context.getFilesDir().getAbsolutePath());
