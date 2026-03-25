@@ -1,21 +1,9 @@
+import groovy.json.JsonSlurper
+
 apply plugin: "com.android.library"
 
 def safeExtGet(prop, fallback) {
     return rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
-}
-
-def isNewArchitectureEnabled() {
-    // To opt-in for the New Architecture, you can either:
-    // - Set `newArchEnabled` to true inside the `gradle.properties` file
-    // - Invoke gradle with `-newArchEnabled=true`
-    // - Set an environment variable `ORG_GRADLE_PROJECT_newArchEnabled=true`
-    return project.hasProperty("newArchEnabled") && project.newArchEnabled == "true" || System.env.ORG_GRADLE_PROJECT_newArchEnabled == "true"
-}
-
-def IS_NEW_ARCHITECTURE_ENABLED = isNewArchitectureEnabled()
-
-if (IS_NEW_ARCHITECTURE_ENABLED) {
-    apply plugin: "com.facebook.react"
 }
 
 def DEFAULT_COMPILE_SDK_VERSION = 26
@@ -23,14 +11,62 @@ def DEFAULT_BUILD_TOOLS_VERSION = "26.0.3"
 def DEFAULT_TARGET_SDK_VERSION = 26
 def DEFAULT_MIN_SDK_VERSION = 16
 
+def findReactNativePackageJson() {
+    File currentDir = projectDir
+
+    while (currentDir != null) {
+        File packageJson = new File(currentDir, "node_modules/react-native/package.json")
+        if (packageJson.exists()) {
+            return packageJson
+        }
+
+        currentDir = currentDir.parentFile
+    }
+
+    return null
+}
+
+def getReactNativeMinorVersion() {
+    File packageJson = findReactNativePackageJson()
+    if (packageJson == null) {
+        return null
+    }
+
+    def version = new JsonSlurper().parseText(packageJson.text).version
+    def stableVersion = version.tokenize("-")[0]
+    def versionParts = stableVersion.tokenize(".")
+    if (versionParts.size() < 2) {
+        return null
+    }
+
+    return versionParts[1].toInteger()
+}
+
+def getReactNativeVersion() {
+    File packageJson = findReactNativePackageJson()
+    if (packageJson == null) {
+        return null
+    }
+
+    def version = new JsonSlurper().parseText(packageJson.text).version
+    return version.tokenize("-")[0]
+}
+
+def reactNativeMinorVersion = getReactNativeMinorVersion()
+def reactNativeVersion = getReactNativeVersion()
+def reactNativeDependency = reactNativeMinorVersion != null && reactNativeMinorVersion < 71
+    ? "com.facebook.react:react-native:${reactNativeVersion ?: '+'}"
+    : "com.facebook.react:react-android:${reactNativeVersion ?: '+'}"
+
 android {
-    namespace "com.microsoft.codepush.react"
+    if (project.android.hasProperty("namespace")) {
+        namespace "com.microsoft.codepush.react"
+    }
 
     compileSdkVersion safeExtGet("compileSdkVersion", DEFAULT_COMPILE_SDK_VERSION)
-    buildToolsVersion safeExtGet("buildToolsVersion", DEFAULT_BUILD_TOOLS_VERSION)
 
-    buildFeatures {
-        buildConfig true
+    if (project.android.hasProperty("buildToolsVersion")) {
+        buildToolsVersion safeExtGet("buildToolsVersion", DEFAULT_BUILD_TOOLS_VERSION)
     }
 
     defaultConfig {
@@ -38,19 +74,12 @@ android {
         targetSdkVersion safeExtGet("targetSdkVersion", DEFAULT_TARGET_SDK_VERSION)
         versionCode 1
         versionName "1.0"
-        buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", IS_NEW_ARCHITECTURE_ENABLED.toString()
-        consumerProguardFiles 'proguard-rules.pro'
+        consumerProguardFiles "proguard-rules.pro"
     }
 
-    sourceSets {
-        main {
-            if (IS_NEW_ARCHITECTURE_ENABLED) {
-                java.srcDirs += ["src/newarch/java"]
-                java.srcDirs += ["$buildDir/generated/source/codegen/java", "$buildDir/generated/source/codegen/android/app/build/generated/source/codegen/java"]
-            } else {
-                java.srcDirs += ["src/oldarch/java"]
-            }
-        }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     lintOptions {
@@ -58,7 +87,13 @@ android {
     }
 }
 
+repositories {
+    google()
+    mavenCentral()
+    mavenLocal()
+}
+
 dependencies {
-    implementation("com.facebook.react:react-android")
-    implementation 'com.nimbusds:nimbus-jose-jwt:9.37.3'
+    implementation(reactNativeDependency)
+    implementation "com.nimbusds:nimbus-jose-jwt:9.37.3"
 }

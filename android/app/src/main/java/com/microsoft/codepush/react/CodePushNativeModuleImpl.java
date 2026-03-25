@@ -8,10 +8,7 @@ import android.os.Looper;
 import android.view.Choreographer;
 import android.view.View;
 
-import androidx.annotation.OptIn;
-
 import com.facebook.react.ReactApplication;
-import com.facebook.react.ReactHost;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactRootView;
 import com.facebook.react.bridge.Arguments;
@@ -21,13 +18,10 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.common.annotations.UnstableReactNativeAPI;
 import com.facebook.react.devsupport.interfaces.DevSupportManager;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.facebook.react.modules.core.ReactChoreographer;
 import com.facebook.react.modules.debug.interfaces.DeveloperSettings;
-import com.facebook.react.runtime.ReactHostDelegate;
-import com.facebook.react.runtime.ReactHostImpl;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -43,7 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@OptIn(markerClass = UnstableReactNativeAPI.class)
 final class CodePushNativeModuleImpl {
     private String mBinaryContentsHash = null;
     private String mClientUniqueId = null;
@@ -131,99 +124,50 @@ final class CodePushNativeModuleImpl {
         }
     }
 
-    private void setJSBundle(ReactHostDelegate reactHostDelegate, String latestJSBundleFile) throws IllegalAccessException {
-        try {
-            JSBundleLoader latestJSBundleLoader;
-            if (latestJSBundleFile.toLowerCase().startsWith("assets://")) {
-                latestJSBundleLoader = JSBundleLoader.createAssetLoader(reactContext, latestJSBundleFile, false);
-            } else {
-                latestJSBundleLoader = JSBundleLoader.createFileLoader(latestJSBundleFile);
-            }
-
-            Field bundleLoaderField = reactHostDelegate.getClass().getDeclaredField("jsBundleLoader");
-            bundleLoaderField.setAccessible(true);
-            bundleLoaderField.set(reactHostDelegate, latestJSBundleLoader);
-        } catch (Exception e) {
-            CodePushUtils.log("Unable to set JSBundle of ReactHostDelegate - CodePush may not support this version of React Native");
-            throw new IllegalAccessException("Could not setJSBundle");
-        }
-    }
-
     private void loadBundle() {
         clearLifecycleEventListener();
 
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            try {
-                DevSupportManager devSupportManager = null;
-                ReactHost reactHost = resolveReactHost();
-                if (reactHost != null) {
-                    devSupportManager = reactHost.getDevSupportManager();
-                }
-                boolean isLiveReloadEnabled = isLiveReloadEnabled(devSupportManager);
-                mCodePush.clearDebugCacheIfNeeded(isLiveReloadEnabled);
-            } catch (Exception e) {
-                mCodePush.clearDebugCacheIfNeeded(false);
-            }
+        try {
+            DevSupportManager devSupportManager = resolveDevSupportManager();
+            boolean isLiveReloadEnabled = isLiveReloadEnabled(devSupportManager);
+            mCodePush.clearDebugCacheIfNeeded(isLiveReloadEnabled);
+        } catch (Exception e) {
+            mCodePush.clearDebugCacheIfNeeded(false);
+        }
 
-            try {
-                final ReactHost reactHost = resolveReactHost();
-                if (reactHost == null) {
-                    return;
-                }
+        try {
+            String latestJSBundleFile = mCodePush.getJSBundleFileInternal(mCodePush.getAssetsBundleFileName());
+            Object reactHost = resolveReactHost();
 
-                String latestJSBundleFile = mCodePush.getJSBundleFileInternal(mCodePush.getAssetsBundleFileName());
-                ReactHostDelegate delegate = getReactHostDelegate((ReactHostImpl) reactHost);
-                if (delegate != null) {
-                    setJSBundle(delegate, latestJSBundleFile);
-                }
-
-                try {
-                    reactHost.reload("CodePush triggers reload");
+            if (reactHost != null) {
+                setReactHostBundleLoader(reactHost, latestJSBundleFile);
+                if (reloadReactHost(reactHost)) {
                     mCodePush.initializeUpdateAfterRestart();
-                } catch (Exception e) {
-                    loadBundleLegacy();
-                }
-            } catch (Exception e) {
-                CodePushUtils.log("Failed to load the bundle, falling back to restarting the Activity (if it exists). " + e.getMessage());
-                loadBundleLegacy();
-            }
-        } else {
-            try {
-                DevSupportManager devSupportManager = null;
-                ReactInstanceManager reactInstanceManager = resolveInstanceManager();
-                if (reactInstanceManager != null) {
-                    devSupportManager = reactInstanceManager.getDevSupportManager();
-                }
-                boolean isLiveReloadEnabled = isLiveReloadEnabled(devSupportManager);
-                mCodePush.clearDebugCacheIfNeeded(isLiveReloadEnabled);
-            } catch (Exception e) {
-                mCodePush.clearDebugCacheIfNeeded(false);
-            }
-
-            try {
-                final ReactInstanceManager instanceManager = resolveInstanceManager();
-                if (instanceManager == null) {
                     return;
                 }
-
-                String latestJSBundleFile = mCodePush.getJSBundleFileInternal(mCodePush.getAssetsBundleFileName());
-                setJSBundle(instanceManager, latestJSBundleFile);
-
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            instanceManager.recreateReactContextInBackground();
-                            mCodePush.initializeUpdateAfterRestart();
-                        } catch (Exception e) {
-                            loadBundleLegacy();
-                        }
-                    }
-                });
-            } catch (Exception e) {
-                CodePushUtils.log("Failed to load the bundle, falling back to restarting the Activity (if it exists). " + e.getMessage());
-                loadBundleLegacy();
             }
+
+            final ReactInstanceManager instanceManager = resolveInstanceManager();
+            if (instanceManager == null) {
+                loadBundleLegacy();
+                return;
+            }
+
+            setJSBundle(instanceManager, latestJSBundleFile);
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        instanceManager.recreateReactContextInBackground();
+                        mCodePush.initializeUpdateAfterRestart();
+                    } catch (Exception e) {
+                        loadBundleLegacy();
+                    }
+                }
+            });
+        } catch (Exception e) {
+            CodePushUtils.log("Failed to load the bundle, falling back to restarting the Activity (if it exists). " + e.getMessage());
+            loadBundleLegacy();
         }
     }
 
@@ -264,7 +208,7 @@ final class CodePushNativeModuleImpl {
         }
     }
 
-    private ReactInstanceManager resolveInstanceManager() throws NoSuchFieldException, IllegalAccessException {
+    private ReactInstanceManager resolveInstanceManager() {
         ReactInstanceManager instanceManager = CodePush.getReactInstanceManager();
         if (instanceManager != null) {
             return instanceManager;
@@ -279,8 +223,21 @@ final class CodePushNativeModuleImpl {
         return reactApplication.getReactNativeHost().getReactInstanceManager();
     }
 
-    private ReactHost resolveReactHost() throws NoSuchFieldException, IllegalAccessException {
-        ReactHost reactHost = CodePush.getReactHost();
+    private DevSupportManager resolveDevSupportManager() {
+        Object reactHost = resolveReactHost();
+        if (reactHost != null) {
+            DevSupportManager devSupportManager = getDevSupportManagerFromReactHost(reactHost);
+            if (devSupportManager != null) {
+                return devSupportManager;
+            }
+        }
+
+        ReactInstanceManager instanceManager = resolveInstanceManager();
+        return instanceManager != null ? instanceManager.getDevSupportManager() : null;
+    }
+
+    private Object resolveReactHost() {
+        Object reactHost = CodePush.getReactHost();
         if (reactHost != null) {
             return reactHost;
         }
@@ -291,7 +248,12 @@ final class CodePushNativeModuleImpl {
         }
 
         ReactApplication reactApplication = (ReactApplication) currentActivity.getApplication();
-        return reactApplication.getReactHost();
+        try {
+            Method getReactHostMethod = reactApplication.getClass().getMethod("getReactHost");
+            return getReactHostMethod.invoke(reactApplication);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private void restartAppInternal(boolean onlyIfUpdateIsPending) {
@@ -729,16 +691,95 @@ final class CodePushNativeModuleImpl {
         // no-op
     }
 
-    ReactHostDelegate getReactHostDelegate(ReactHostImpl reactHostImpl) {
+    private JSBundleLoader createBundleLoader(String latestJSBundleFile) {
+        if (latestJSBundleFile.toLowerCase().startsWith("assets://")) {
+            return JSBundleLoader.createAssetLoader(reactContext, latestJSBundleFile, false);
+        }
+
+        return JSBundleLoader.createFileLoader(latestJSBundleFile);
+    }
+
+    private DevSupportManager getDevSupportManagerFromReactHost(Object reactHost) {
         try {
-            Class<?> clazz = reactHostImpl.getClass();
-            Field field = clazz.getDeclaredField("mReactHostDelegate");
-            field.setAccessible(true);
-            return (ReactHostDelegate) field.get(reactHostImpl);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
+            Method method = reactHost.getClass().getMethod("getDevSupportManager");
+            Object devSupportManager = method.invoke(reactHost);
+            return devSupportManager instanceof DevSupportManager ? (DevSupportManager) devSupportManager : null;
+        } catch (Exception e) {
             return null;
         }
+    }
+
+    private Object getReactHostDelegate(Object reactHost) {
+        try {
+            Method method = reactHost.getClass().getMethod("getReactHostDelegate");
+            return method.invoke(reactHost);
+        } catch (Exception ignored) {
+        }
+
+        try {
+            Field field = findField(reactHost.getClass(), "mReactHostDelegate", "reactHostDelegate");
+            if (field == null) {
+                return null;
+            }
+
+            field.setAccessible(true);
+            return field.get(reactHost);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private void setReactHostBundleLoader(Object reactHost, String latestJSBundleFile) throws IllegalAccessException {
+        Object reactHostDelegate = getReactHostDelegate(reactHost);
+        if (reactHostDelegate == null) {
+            throw new IllegalAccessException("Could not resolve ReactHostDelegate");
+        }
+
+        try {
+            Field bundleLoaderField = findField(reactHostDelegate.getClass(), "jsBundleLoader", "mJsBundleLoader");
+            if (bundleLoaderField == null) {
+                throw new NoSuchFieldException("jsBundleLoader");
+            }
+
+            bundleLoaderField.setAccessible(true);
+            bundleLoaderField.set(reactHostDelegate, createBundleLoader(latestJSBundleFile));
+        } catch (Exception e) {
+            CodePushUtils.log("Unable to set JSBundle of ReactHostDelegate - CodePush may not support this version of React Native");
+            throw new IllegalAccessException("Could not setJSBundle");
+        }
+    }
+
+    private boolean reloadReactHost(Object reactHost) {
+        try {
+            Method reloadWithReasonMethod = reactHost.getClass().getMethod("reload", String.class);
+            reloadWithReasonMethod.invoke(reactHost, "CodePush triggers reload");
+            return true;
+        } catch (Exception ignored) {
+        }
+
+        try {
+            Method reloadMethod = reactHost.getClass().getMethod("reload");
+            reloadMethod.invoke(reactHost);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private Field findField(Class<?> type, String... fieldNames) {
+        Class<?> currentType = type;
+        while (currentType != null) {
+            for (String fieldName : fieldNames) {
+                try {
+                    return currentType.getDeclaredField(fieldName);
+                } catch (NoSuchFieldException ignored) {
+                }
+            }
+
+            currentType = currentType.getSuperclass();
+        }
+
+        return null;
     }
 }
 
