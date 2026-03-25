@@ -39,7 +39,6 @@ code-push-plugin-testing-framework/
 
 # Android build artifacts and Android Studio bits
 android/build
-android/app/
 android/app/build
 android/local.properties
 android/.gradle
