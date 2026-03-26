@@ -6,11 +6,22 @@ import mkdirp = require("mkdirp");
 import path = require("path");
 import slash = require("slash");
 
-import { Platform, PluginTestingFramework, ProjectManager, setupTestRunScenario, setupUpdateScenario, ServerUtil, TestBuilder, TestConfig, TestUtil } from "code-push-plugin-testing-framework";
+import PluginTestingFrameworkPackage = require("@srcpush/plugin-testing-framework");
 
 import Q = require("q");
 
-import {isOldArchitecture} from "code-push-plugin-testing-framework/script/testConfig";
+const Framework: any = PluginTestingFrameworkPackage;
+const Platform = Framework.Platform;
+const PluginTestingFramework = Framework.PluginTestingFramework;
+const ProjectManager = Framework.ProjectManager;
+const setupTestRunScenario = Framework.setupTestRunScenario;
+const setupUpdateScenario = Framework.setupUpdateScenario;
+const ServerUtil = Framework.ServerUtil;
+const TestBuilder = Framework.TestBuilder;
+const TestConfig = Framework.TestConfig;
+const TestUtil = Framework.TestUtil;
+
+type FrameworkPlatform = any;
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Create the platforms to run the tests on.
@@ -254,7 +265,7 @@ class RNIOS extends Platform.IOS implements RNPlatform {
     }
 }
 
-const supportedTargetPlatforms: Platform.IPlatform[] = [new RNAndroid(), new RNIOS()];
+const supportedTargetPlatforms: FrameworkPlatform[] = [new RNAndroid(), new RNIOS()];
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Create the ProjectManager to use for the tests.
@@ -343,7 +354,7 @@ class RNProjectManager extends ProjectManager {
     /**
      * Sets up the scenario for a test in an already existing project.
      */
-    public setupScenario(projectDirectory: string, appId: string, templatePath: string, jsPath: string, targetPlatform: Platform.IPlatform, version?: string): Q.Promise<void> {
+    public setupScenario(projectDirectory: string, appId: string, templatePath: string, jsPath: string, targetPlatform: FrameworkPlatform, version?: string): Q.Promise<void> {
         // We don't need to anything if it is the current scenario.
         if (RNProjectManager.currentScenario[projectDirectory] === jsPath) return Q<void>(null);
         RNProjectManager.currentScenario[projectDirectory] = jsPath;
@@ -368,7 +379,7 @@ class RNProjectManager extends ProjectManager {
     /**
      * Creates a CodePush update package zip for a project.
      */
-    public createUpdateArchive(projectDirectory: string, targetPlatform: Platform.IPlatform, isDiff?: boolean): Q.Promise<string> {
+    public createUpdateArchive(projectDirectory: string, targetPlatform: FrameworkPlatform, isDiff?: boolean): Q.Promise<string> {
         const bundleFolder: string = path.join(projectDirectory, TestConfig.TestAppName, "CodePush/");
         const bundleName: string = (<RNPlatform><any>targetPlatform).getBundleName();
         const bundlePath: string = path.join(bundleFolder, bundleName);
@@ -398,7 +409,7 @@ class RNProjectManager extends ProjectManager {
     /**
      * Prepares a specific platform for tests.
      */
-    public preparePlatform(projectDirectory: string, targetPlatform: Platform.IPlatform): Q.Promise<void> {
+    public preparePlatform(projectDirectory: string, targetPlatform: FrameworkPlatform): Q.Promise<void> {
         const deferred = Q.defer<string>();
 
         const platformsJSONPath = path.join(projectDirectory, RNProjectManager.platformsJSON);
@@ -428,7 +439,7 @@ class RNProjectManager extends ProjectManager {
     /**
      * Cleans up a specific platform after tests.
      */
-    public cleanupAfterPlatform(projectDirectory: string, targetPlatform: Platform.IPlatform): Q.Promise<void> {
+    public cleanupAfterPlatform(projectDirectory: string, targetPlatform: FrameworkPlatform): Q.Promise<void> {
         // Can't uninstall from command line, so noop.
         return Q<void>(null);
     }
@@ -436,7 +447,7 @@ class RNProjectManager extends ProjectManager {
     /**
      * Runs the test app on the given target / platform.
      */
-    public runApplication(projectDirectory: string, targetPlatform: Platform.IPlatform): Q.Promise<void> {
+    public runApplication(projectDirectory: string, targetPlatform: FrameworkPlatform): Q.Promise<void> {
         console.log("Running project in " + projectDirectory + " on " + targetPlatform.getName());
 
         return Q<void>(null)
@@ -498,7 +509,7 @@ const UpdateNotifyApplicationReadyConditional = "updateNARConditional.js";
 // Initialize the tests.
 
 PluginTestingFramework.initializeTests(new RNProjectManager(), supportedTargetPlatforms,
-    (projectManager: ProjectManager, targetPlatform: Platform.IPlatform) => {
+    (projectManager: any, targetPlatform: FrameworkPlatform) => {
         TestBuilder.describe("#window.codePush.checkForUpdate",
             () => {
                 TestBuilder.it("window.codePush.checkForUpdate.noUpdate", false,
