@@ -5,7 +5,22 @@ import { AppState, Platform } from "react-native";
 import log from "./logging";
 import hoistStatics from 'hoist-non-react-statics';
 
-let NativeCodePush = require("react-native").NativeModules.CodePush;
+function resolveNativeModule(name) {
+  const ReactNative = require("react-native");
+  try {
+    const turboModule =
+      ReactNative.TurboModuleRegistry && ReactNative.TurboModuleRegistry.get
+        ? ReactNative.TurboModuleRegistry.get(name)
+        : null;
+    if (turboModule) return turboModule;
+  } catch (_e) {
+    // Ignore and fall back to legacy NativeModules.
+  }
+
+  return ReactNative.NativeModules ? ReactNative.NativeModules[name] : null;
+}
+
+let NativeCodePush = resolveNativeModule("CodePush");
 const PackageMixins = require("./package-mixins")(NativeCodePush);
 
 async function checkForUpdate(deploymentKey = null, handleBinaryVersionMismatchCallback = null) {

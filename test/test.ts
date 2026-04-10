@@ -6,11 +6,9 @@ import mkdirp = require("mkdirp");
 import path = require("path");
 import slash = require("slash");
 
-import { Platform, PluginTestingFramework, ProjectManager, setupTestRunScenario, setupUpdateScenario, ServerUtil, TestBuilder, TestConfig, TestUtil } from "code-push-plugin-testing-framework";
+import { Platform, PluginTestingFramework, ProjectManager, setupTestRunScenario, setupUpdateScenario, ServerUtil, TestBuilder, TestConfig, TestUtil } from "@srcpush/plugin-testing-framework";
 
 import Q = require("q");
-
-import {isOldArchitecture} from "code-push-plugin-testing-framework/script/testConfig";
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Create the platforms to run the tests on.

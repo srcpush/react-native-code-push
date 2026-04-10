@@ -5,7 +5,6 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 
-import com.facebook.react.ReactHost;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.JavaScriptModule;
@@ -60,6 +59,7 @@ public class CodePush implements ReactPackage {
     private static ReactInstanceHolder mReactInstanceHolder;
 
     private static ReactHostHolder mReactHostHolder;
+    private static Object mReactHost;
 
     public CodePush(String deploymentKey, Context context) {
         this(deploymentKey, context, false);
@@ -69,7 +69,7 @@ public class CodePush implements ReactPackage {
         return mServerUrl;
     }
 
-    private CodePush(String deploymentKey, Context context, boolean isDebugMode) {
+    public CodePush(String deploymentKey, Context context, boolean isDebugMode) {
         mContext = context.getApplicationContext();
 
         mUpdateManager = new CodePushUpdateManager(context.getFilesDir().getAbsolutePath());
@@ -406,6 +406,10 @@ public class CodePush implements ReactPackage {
         mReactHostHolder = reactHostHolder;
     }
 
+    public static void setReactHost(Object reactHost) {
+        mReactHost = reactHost;
+    }
+
     static ReactInstanceManager getReactInstanceManager() {
         if (mReactInstanceHolder == null) {
             return null;
@@ -413,7 +417,11 @@ public class CodePush implements ReactPackage {
         return mReactInstanceHolder.getReactInstanceManager();
     }
 
-    static ReactHost getReactHost() {
+    static Object getReactHost() {
+        if (mReactHost != null) {
+            return mReactHost;
+        }
+
         if (mReactHostHolder == null) {
             return null;
         }
@@ -423,13 +431,10 @@ public class CodePush implements ReactPackage {
 
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactApplicationContext) {
-        CodePushNativeModule codePushModule = new CodePushNativeModule(reactApplicationContext, this, mUpdateManager, mTelemetryManager, mSettingsManager);
-        CodePushDialog dialogModule = new CodePushDialog(reactApplicationContext);
-
-        List<NativeModule> nativeModules = new ArrayList<>();
-        nativeModules.add(codePushModule);
-        nativeModules.add(dialogModule);
-        return nativeModules;
+        List<NativeModule> modules = new ArrayList<>();
+        modules.add(new CodePushNativeModule(reactApplicationContext, this, mUpdateManager, mTelemetryManager, mSettingsManager));
+        modules.add(new CodePushDialog(reactApplicationContext));
+        return modules;
     }
 
     // Deprecated in RN v0.47.
