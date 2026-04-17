@@ -38,10 +38,6 @@ def findReactNativePackageJson() {
 
     return null
 }
-    }
-
-    return null
-}
 
 def getReactNativeVersion() {
     File packageJson = findReactNativePackageJson()
