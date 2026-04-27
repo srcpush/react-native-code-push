@@ -1,4 +1,4 @@
-#### [Sign up With Source Push](https://console.srcpush.com/register) to use Source Push SDK
+#### [Sign up with Source Push](https://srcpush.com/) to use the Source Push SDK
 
 # React Native SDK for Source Push (CodePush compatible service)
 
@@ -14,7 +14,7 @@ This plugin provides client-side integration for the [Source Push service](https
   * [Android Setup](docs/setup-android.md)
 * [Plugin Usage](#plugin-usage)
 * [Releasing Updates](#releasing-updates)
-* [Migrate from Appcenter to Source Push](#migrate-from-appcenter)
+* [Migrate from App Center to Source Push](#migrate-from-appcenter)
 * [Continuous Integration / Delivery](#continuous-integration--delivery)
 * [Multi-Deployment Testing](#multi-deployment-testing)
   * [Android](docs/multi-deployment-testing-android.md)
@@ -34,9 +34,9 @@ This plugin provides client-side integration for the [Source Push service](https
 
 A React Native app is composed of JavaScript files and any accompanying [images](https://reactnative.dev/docs/image), which are bundled together by the [metro bundler](https://github.com/facebook/metro) and distributed as part of a platform-specific binary (i.e. an `.ipa` or `.apk` file). Once the app is released, updating either the JavaScript code (e.g. making bug fixes, adding new features) or image assets, requires you to recompile and redistribute the entire binary, which of course, includes any review time associated with the store(s) you are publishing to.
 
-The Source Push plugin helps get product improvements in front of your end users instantly, by keeping your JavaScript and images synchronized with updates you release to the Source Push server. This way, your app gets the benefits of an offline mobile experience, as well as the "web-like" agility of side-loading updates as soon as they are available. It's a win-win!
+The Source Push SDK helps get product improvements in front of your end users instantly, by keeping your JavaScript and images synchronized with updates you release to the Source Push service. This way, your app gets the benefits of an offline mobile experience, as well as the "web-like" agility of side-loading updates as soon as they are available. It's a win-win!
 
-In order to ensure that your end users always have a functioning version of your app, the Source Push plugin maintains a copy of the previous update, so that in the event that you accidentally push an update which includes a crash, it can automatically roll back. This way, you can rest assured that your newfound release agility won't result in users becoming blocked before you have a chance to roll back on the server. It's a win-win-win!
+In order to ensure that your end users always have a functioning version of your app, the Source Push SDK maintains a copy of the previous update, so that in the event that you accidentally push an update which includes a crash, it can automatically roll back. This way, you can rest assured that your newfound release agility won't result in users becoming blocked before you have a chance to roll back on the server. It's a win-win-win!
 
 *Note: Any product changes which touch native code (e.g. modifying your `AppDelegate.m`/`MainActivity.java` file, adding a new plugin) cannot be distributed via Source Push, and therefore, must be updated via the appropriate store(s).*
 
@@ -45,11 +45,11 @@ In order to ensure that your end users always have a functioning version of your
 * iOS (7+)
 * Android (4.1+) on TLS 1.2 compatible devices
 
-We try our best to maintain backwards compatibility of our plugin with previous versions of React Native, but due to the nature of the platform, and the existence of breaking changes between releases, it is possible that you need to use a specific version of the Source Push plugin in order to support the exact version of React Native you are using. The following table outlines which Source Push plugin versions officially support the respective React Native versions:
+We try our best to maintain backwards compatibility of our plugin with previous versions of React Native, but due to the nature of the platform, and the existence of breaking changes between releases, it is possible that you need to use a specific version of the Source Push SDK in order to support the exact version of React Native you are using. The following table outlines which Source Push SDK versions officially support the respective React Native versions:
 
 | React Native version(s) | Supporting Source Push version(s)                                                              |
 |-------------------------|---------------------------------------------------------------------------------------------|
-| <v0.76                  | Use [microsoft/code-push-react-native](https://github.com/microsoft/react-native-code-push) |
+| <v0.76                  | Use [srcpush/react-native-code-push](https://github.com/srcpush/react-native-code-push) |
 | v0.76, v0.77, 0.78      | v1.0+ *(Support both New and Old Architectures)*                                            |
 
 We work hard to respond to new RN releases, but they do occasionally break us. We will update this chart with each RN release, so that users can check to see what our "official" support is.
@@ -101,7 +101,7 @@ Then continue with installing the native module
 
 ## Plugin Usage
 
-With the Source Push plugin downloaded and linked, and your app asking Source Push where to get the right JS bundle from, the only thing left is to add the necessary code to your app to control the following policies:
+With the Source Push SDK downloaded and linked, and your app asking Source Push where to get the right JS bundle from, the only thing left is to add the necessary code to your app to control the following policies:
 
 1. When (and how often) to check for an update? (for example app start, in response to clicking a button in a settings page, periodically at some fixed interval)
 
@@ -160,7 +160,7 @@ The simplest way to do this is to "Source Push-ify" your app's root component. T
 
 By default, CodePush will check for updates on every app start. If an update is available, it will be silently downloaded, and installed the next time the app is restarted (either explicitly by the end user or by the OS), which ensures the least invasive experience for your end users. If an available update is mandatory, then it will be installed immediately, ensuring that the end user gets it as soon as possible.
 
-If you would like your app to discover updates more quickly, you can also choose to sync up with the CodePush server every time the app resumes from the background.
+If you would like your app to discover updates more quickly, you can also choose to sync up with the Source Push service every time the app resumes from the background.
 
 * For class component
 
@@ -217,7 +217,7 @@ If you would like to display an update confirmation dialog (an "active install")
 
 ## Releasing Updates
 
-Once your app is configured and distributed to your users, and you have made some JS or asset changes, it's time to release them. The recommended way to release them is using the `release-react` command in the App Center CLI, which will bundle your JavaScript files, asset files, and release the update to the CodePush server.
+Once your app is configured and distributed to your users, and you have made some JS or asset changes, it's time to release them. The recommended way to release them is using the `release-react` command in the Source Push CLI, which will bundle your JavaScript files, asset files, and release the update to the Source Push service.
 
 ```shell
 npm install -g @srcpush/code-push-cli
@@ -253,15 +253,15 @@ srcpush release-react MyApp android  --targetBinaryVersion "~1.1.0"
 
 The CodePush client supports differential updates, so even though you are releasing your JS bundle and assets on every update, your end users will only actually download the files they need. The service handles this automatically so that you can focus on creating awesome apps, and we can worry about optimizing end user downloads.
 
-For more details about how the `release-react` command works, as well as the various parameters it exposes, refer to the [CLI docs](https://github.com/srcpush/code-push-cli/blob/main/README.md). Additionally, if you would prefer to handle running the `react-native bundle` command yourself, and therefore, want an even more flexible solution than `release-react`, refer to the [`release` command](https://github.com/microsoft/code-push/tree/v3.0.1/cli#releasing-updates-general) for more details.
+For more details about how the `release-react` command works, as well as the various parameters it exposes, refer to the [CLI docs](https://github.com/srcpush/code-push-cli/blob/main/README.md). Additionally, if you would prefer to handle running the `react-native bundle` command yourself, and therefore, want an even more flexible solution than `release-react`, refer to the [`release` command](https://github.com/srcpush/code-push-cli#releasing-updates-general) for more details.
 
 If you run into any issues, or have any questions/comments/feedback, [e-mail us](mailto:support@srcpush.com) and/or check out the [troubleshooting](#debugging--troubleshooting) details below.
 
 *NOTE: CodePush updates should be tested in modes other than Debug mode. In Debug mode, React Native app always downloads JS bundle generated by packager, so JS bundle downloaded by CodePush does not apply.*
 
-### Migrate from Appcenter to Source Push
+### Migrate from App Center to Source Push
 
-Follow our [comprehensive guide](https://github.com/srcpush/code-push-cli/blob/main/README.md) that will help you migrate your applications from App Center.
+Follow our [comprehensive guide](https://docs.srcpush.com/) to migrate your applications from App Center.
 
 ### Continuous Integration / Delivery
 
@@ -389,7 +389,7 @@ Now you'll be able to see CodePush logs in either debug or release mode, on both
 |-----------------|-------------------|
 | Compilation Error | Double-check that your version of React Native is [compatible](#supported-react-native-platforms) with the CodePush version you are using. |
 | Network timeout / hang when calling `sync` or `checkForUpdate` in the iOS Simulator | Try resetting the simulator by selecting the `Simulator -> Reset Content and Settings..` menu item, and then re-running your app. |
-| Server responds with a `404` when calling `sync` or `checkForUpdate` | Double-check that the deployment key you added to your `Info.plist` (iOS), `build.gradle` (Android) or that you're passing to `sync`/`checkForUpdate`, is in fact correct. You can run `appcenter codepush deployment list <ownerName>/<appName> --displayKeys` to view the correct keys for your app deployments. |
+| Server responds with a `404` when calling `sync` or `checkForUpdate` | Double-check that the deployment key you added to your `Info.plist` (iOS), `build.gradle` (Android) or that you're passing to `sync`/`checkForUpdate`, is in fact correct. You can run `srcpush deployment ls <ownerName>/<appName> -k` to view the correct keys for your app deployments. |
 | Update not being discovered | Double-check that the version of your running app (like `1.0.0`) matches the version you specified when releasing the update to CodePush. Additionally, make sure that you are releasing to the same deployment that your app is configured to sync with. |
 | Update not being displayed after restart | If you're not calling `sync` on app start (like within `componentDidMount` of your root component), then you need to explicitly call `notifyApplicationReady` on app start, otherwise, the plugin will think your update failed and roll it back. |
 | I've released an update for iOS but my Android app also shows an update and it breaks it | Be sure you have different deployment keys for each platform in order to receive updates correctly |
@@ -398,6 +398,6 @@ Now you'll be able to see CodePush logs in either debug or release mode, on both
 
 ### TypeScript Consumption
 
-This module ships its `*.d.ts` file as part of its NPM package, which allows you to simply `import` it, and receive intellisense in supporting editors (like Visual Studio Code), as well as compile-time type checking if you're using TypeScript. For the most part, this behavior should just work out of the box, however, if you've specified `es6` as the value for either the `target` or `module` [compiler option](http://www.typescriptlang.org/docs/handbook/compiler-options.html) in your [`tsconfig.json`](http://www.typescriptlang.org/docs/handbook/tsconfig-json.html) file, then just make sure that you also set the `moduleResolution` option to `node`. This ensures that the TypeScript compiler will look within the `node_modules` for the type definitions of imported modules. Otherwise, you'll get an error like the following when trying to import the `react-native-code-push` module: `error TS2307: Cannot find module 'react-native-code-push'`.
+This module ships its `*.d.ts` file as part of its NPM package, which allows you to simply `import` it, and receive intellisense in supporting editors (like Visual Studio Code), as well as compile-time type checking if you're using TypeScript. For the most part, this behavior should just work out of the box, however, if you've specified `es6` as the value for either the `target` or `module` [compiler option](http://www.typescriptlang.org/docs/handbook/compiler-options.html) in your [`tsconfig.json`](http://www.typescriptlang.org/docs/handbook/tsconfig-json.html) file, then just make sure that you also set the `moduleResolution` option to `node`. This ensures that the TypeScript compiler will look within the `node_modules` for the type definitions of imported modules. Otherwise, you'll get an error like the following when trying to import the `@srcpush/react-native-code-push` module: `error TS2307: Cannot find module '@srcpush/react-native-code-push'`.
 
 ---
