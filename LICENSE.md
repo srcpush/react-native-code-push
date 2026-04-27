@@ -1,6 +1,6 @@
-Microsoft CodePush Plugin for React Native
+Source Push React Native CodePush Plugin
 
-Copyright (c) Microsoft Corporation
+Copyright (c) Source Push
 
 All rights reserved.
 

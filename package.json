@@ -1,6 +1,6 @@
 {
   "name": "@srcpush/react-native-code-push",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "description": "React Native plugin for the CodePush service",
   "main": "CodePush.js",
   "typings": "typings/react-native-code-push.d.ts",
@@ -22,6 +22,7 @@
   "author": "Source Push",
   "license": "MIT",
   "scripts": {
+    "pod-install": "pod install --project-directory=ios",
     "clean": "shx rm -rf bin",
     "setup": "npm install --quiet --no-progress",
     "prebuild:tests": "npm run clean && npm run tslint",

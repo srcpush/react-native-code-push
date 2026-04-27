@@ -1,6 +1,6 @@
 ## iOS Setup
 
-Once you've acquired the Source Push plugin, you need to integrate it into the Xcode project of your React Native app and configure it correctly. To do this, take the following steps:
+Once you've acquired the Source Push SDK, you need to integrate it into the Xcode project of your React Native app and configure it correctly. To do this, take the following steps:
 
 ### Plugin Installation and Configuration for React Native 0.76 version and above (iOS)
 
@@ -92,7 +92,7 @@ That "friendly name" is intended only for authenticated management usage from th
 
 ### HTTP exception domains configuration (iOS)
 
-Source Push plugin makes HTTPS requests to the following domains:
+The Source Push SDK makes HTTPS requests to the following domains:
 
 - api.srcpush.com
 - blob.srcpush.com

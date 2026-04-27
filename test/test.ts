@@ -8,7 +8,6 @@ import slash = require("slash");
 
 import { Platform, PluginTestingFramework, ProjectManager, setupTestRunScenario, setupUpdateScenario, ServerUtil, TestBuilder, TestConfig, TestUtil } from "@srcpush/plugin-testing-framework";
 
-import Q = require("q");
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Create the platforms to run the tests on.

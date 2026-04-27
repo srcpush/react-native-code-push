@@ -16,12 +16,12 @@ What actually happens?
 
 ### Reproducible Demo
 
-* Download https://github.com/microsoft/react-native-code-push/archive/master.zip and unzip. From `Examples` folder run `node create-app.js appName react-native@0.71.19 react-native-code-push@9.0.1` command to generate plain CodePushified React Native app. Please see description on top of `create-app.js` file content if needed
+* Download https://github.com/srcpush/react-native-code-push/archive/main.zip and unzip. From the `Examples` folder run `node create-app.js appName react-native@0.71.19 @srcpush/react-native-code-push@1.2.0` to generate a plain Source Push-enabled React Native app. See the description at the top of `create-app.js` if needed.
 * If you can't reproduce the bug on it, provide us as much info as possible about your project
 
 ### Environment
 
-* react-native-code-push version:
+* @srcpush/react-native-code-push version:
 * react-native version:
 * iOS/Android/Windows version:
 * Does this reproduce on a debug build or release build?
