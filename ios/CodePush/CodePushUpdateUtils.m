@@ -1,6 +1,13 @@
 #import "CodePush.h"
 #include <CommonCrypto/CommonDigest.h>
+
+#if __has_include(<JWT/JWT.h>)
+#import <JWT/JWT.h>
+#elif __has_include(<JWT.h>)
+#import <JWT.h>
+#else
 #import "JWT.h"
+#endif
 
 @implementation CodePushUpdateUtils
 

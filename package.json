@@ -22,6 +22,7 @@
   "author": "Source Push",
   "license": "MIT",
   "scripts": {
+    "pod-install": "pod install --project-directory=ios",
     "clean": "shx rm -rf bin",
     "setup": "npm install --quiet --no-progress",
     "prebuild:tests": "npm run clean && npm run tslint",
