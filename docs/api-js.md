@@ -1,6 +1,6 @@
 ## API Reference
 
-The Source Push plugin is made up of two components:
+The Source Push SDK is made up of two components:
 
 1. A JavaScript module, which can be imported/required, and allows the app to interact with the service during runtime (for example check for updates, inspect the metadata about the currently running app update).
 
@@ -10,7 +10,7 @@ The following sections describe the shape and behavior of these APIs in detail:
 
 ### JavaScript API Reference
 
-When you require `react-native-code-push`, the module object provides the following top-level methods in addition to the root-level [component decorator](#codepush):
+When you require `@srcpush/react-native-code-push`, the module object provides the following top-level methods in addition to the root-level [component decorator](#codepush):
 
 * [allowRestart](#codepushallowrestart): Re-allows programmatic restarts to occur as a result of an update being installed, and optionally, immediately restarts the app if a pending update had attempted to restart the app while restarts were disallowed. This is an advanced API and is only necessary if your app explicitly disallowed restarts via the `disallowRestart` method.
 
@@ -128,7 +128,7 @@ The `codePush` decorator accepts an "options" object that allows you to customiz
 
 * __minimumBackgroundDuration__ *(Number)* - Specifies the minimum number of seconds that the app needs to have been in the background before restarting the app. This property only applies to updates which are installed using `InstallMode.ON_NEXT_RESUME` or `InstallMode.ON_NEXT_SUSPEND`, and can be useful for getting your update in front of end users sooner, without being too obtrusive. Defaults to `0`, which has the effect of applying the update immediately after a resume or unless the app suspension is long enough to not matter, regardless how long it was in the background.
 
-* __updateDialog__ *(UpdateDialogOptions)* - An "options" object used to determine whether a confirmation dialog should be displayed to the end user when an update is available, and if so, what strings to use. Defaults to `null`, which has the effect of disabling the dialog completely. Setting this to any truthy value will enable the dialog with the default strings, and passing an object to this parameter allows enabling the dialog as well as overriding one or more of the default strings. Before enabling this option within an App Store-distributed app, please refer to [this note](https://github.com/microsoft/react-native-code-push#app-store).
+* __updateDialog__ *(UpdateDialogOptions)* - An "options" object used to determine whether a confirmation dialog should be displayed to the end user when an update is available, and if so, what strings to use. Defaults to `null`, which has the effect of disabling the dialog completely. Setting this to any truthy value will enable the dialog with the default strings, and passing an object to this parameter allows enabling the dialog as well as overriding one or more of the default strings. Before enabling this option within an App Store-distributed app, please refer to [this note](https://github.com/srcpush/react-native-code-push#app-store).
 
     The following list represents the available options and their defaults:
 
@@ -162,7 +162,7 @@ Called when the sync process moves from one stage to another in the overall upda
 
 ##### codePushDownloadDidProgress (event hook)
 
-Called periodically when an available update is being downloaded from the Source Push server. The method is called with a `DownloadProgress` object, which contains the following two properties:
+Called periodically when an available update is being downloaded from the Source Push service. The method is called with a `DownloadProgress` object, which contains the following two properties:
 
 * __totalBytes__ *(Number)* - The total number of bytes expected to be received for this update (i.e. the size of the set of files which changed from the previous release).
 
@@ -248,9 +248,9 @@ Temporarily disallows programmatic restarts to occur as a result of either of fo
 
 After calling this method, any calls to `sync` would still be allowed to check for an update, download it and install it, but an attempt to restart the app would be queued until `allowRestart` is called. This way, the restart request is captured and can be "flushed" whenever you want to allow it to occur.
 
-This is an advanced API, and is primarily useful when individual components within your app (like an onboarding process) need to ensure that no end-user interruptions can occur during their lifetime, while continuing to allow the app to keep syncing with the Source Push server at its own pace and using whatever install modes are appropriate. This has the benefit of allowing the app to discover and download available updates as soon as possible, while also preventing any disruptions during key end-user experiences.
+This is an advanced API, and is primarily useful when individual components within your app (like an onboarding process) need to ensure that no end-user interruptions can occur during their lifetime, while continuing to allow the app to keep syncing with the Source Push service at its own pace and using whatever install modes are appropriate. This has the benefit of allowing the app to discover and download available updates as soon as possible, while also preventing any disruptions during key end-user experiences.
 
-As an alternative, you could also choose to simply use `InstallMode.ON_NEXT_RESTART` whenever calling `sync` (which will never attempt to programmatically restart the app), and then explicity calling `restartApp` at points in your app that you know it is "safe" to do so. `disallowRestart` provides an alternative approach to this when the code that synchronizes with the CodePush server is separate from the code/components that want to enforce a no-restart policy.
+As an alternative, you could also choose to simply use `InstallMode.ON_NEXT_RESTART` whenever calling `sync` (which will never attempt to programmatically restart the app), and then explicity calling `restartApp` at points in your app that you know it is "safe" to do so. `disallowRestart` provides an alternative approach to this when the code that synchronizes with the Source Push service is separate from the code/components that want to enforce a no-restart policy.
 
 Example Usage:
 
@@ -456,7 +456,7 @@ In addition to the options, the `sync` method also accepts several optional func
 
 * __syncStatusChangedCallback__ *((syncStatus: Number) => void)* - Called when the sync process moves from one stage to another in the overall update process. The method is called with a status code which represents the current state, and can be any of the [`SyncStatus`](#syncstatus) values.
 
-* __downloadProgressCallback__ *((progress: DownloadProgress) => void)* - Called periodically when an available update is being downloaded from the CodePush server. The method is called with a `DownloadProgress` object, which contains the following two properties:
+* __downloadProgressCallback__ *((progress: DownloadProgress) => void)* - Called periodically when an available update is being downloaded from the Source Push service. The method is called with a `DownloadProgress` object, which contains the following two properties:
 
     * __totalBytes__ *(Number)* - The total number of bytes expected to be received for this update (i.e. the size of the set of files which changed from the previous release).
 
@@ -489,7 +489,7 @@ codePush.sync({ updateDialog: true },
 
 This method returns a `Promise` which is resolved to a `SyncStatus` code that indicates why the `sync` call succeeded. This code can be one of the following `SyncStatus` values:
 
-* __codePush.SyncStatus.UP_TO_DATE__ *(0)* - The app is up-to-date with the CodePush server.
+* __codePush.SyncStatus.UP_TO_DATE__ *(0)* - The app is up-to-date with the Source Push service.
 
 * __codePush.SyncStatus.UPDATE_IGNORED__ *(2)* - The app had an optional update which the end user chose to ignore. (This is only applicable when the `updateDialog` is used)
 
@@ -505,7 +505,7 @@ The `checkForUpdate` and `getUpdateMetadata` methods return `Promise` objects, t
 
 * [LocalPackage](#localpackage): Represents a downloaded update that is either already running, or has been installed and is pending an app restart.
 
-* [RemotePackage](#remotepackage): Represents an available update on the CodePush server that hasn't been downloaded yet.
+* [RemotePackage](#remotepackage): Represents an available update on the Source Push service that hasn't been downloaded yet.
 
 ##### LocalPackage
 
@@ -519,7 +519,7 @@ Contains details about an update that has been downloaded locally or already ins
 - __isFirstRun__: Indicates whether this is the first time the update has been run after being installed. This is useful for determining whether you would like to show a "What's New?" UI to the end user after installing an update. *(Boolean)*
 - __isMandatory__: Indicates whether the update is considered mandatory.  This is the value that was specified in the CLI when the update was released. *(Boolean)*
 - __isPending__: Indicates whether this update is in a "pending" state. When `true`, that means the update has been downloaded and installed, but the app restart needed to apply it hasn't occurred yet, and therefore, it's changes aren't currently visible to the end-user. *(Boolean)*
-- __label__: The internal label automatically given to the update by the CodePush server, such as `v5`. This value uniquely identifies the update within it's deployment. *(String)*
+- __label__: The internal label automatically given to the update by the Source Push service, such as `v5`. This value uniquely identifies the update within it's deployment. *(String)*
 - __packageHash__: The SHA hash value of the update. *(String)*
 - __packageSize__: The size of the code contained within the update, in bytes. *(Number)*
 
@@ -529,7 +529,7 @@ Contains details about an update that has been downloaded locally or already ins
 
 ##### RemotePackage
 
-Contains details about an update that is available for download from the CodePush server. You get a reference to an instance of this object by calling the `checkForUpdate` method when an update is available. If you are using the `sync` API, you don't need to worry about the `RemotePackage`, since it will handle the download and installation process automatically for you.
+Contains details about an update that is available for download from the Source Push service. You get a reference to an instance of this object by calling the `checkForUpdate` method when an update is available. If you are using the `sync` API, you don't need to worry about the `RemotePackage`, since it will handle the download and installation process automatically for you.
 
 ###### Properties
 
@@ -576,9 +576,9 @@ This enum is provided to the `syncStatusChangedCallback` function that can be pa
 * __codePush.SyncStatus.UPDATE_IGNORED__ *(2)* - The app has an optional update, which the end user chose to ignore. (This is only applicable when the `updateDialog` is used)
 * __codePush.SyncStatus.UNKNOWN_ERROR__ *(3)* - The sync operation encountered an unknown error.
 * __codePush.SyncStatus.SYNC_IN_PROGRESS__ *(4)* - There is an ongoing `sync` operation running which prevents the current call from being executed.
-* __codePush.SyncStatus.CHECKING_FOR_UPDATE__ *(5)* - The CodePush server is being queried for an update.
+* __codePush.SyncStatus.CHECKING_FOR_UPDATE__ *(5)* - The Source Push service is being queried for an update.
 * __codePush.SyncStatus.AWAITING_USER_ACTION__ *(6)* - An update is available, and a confirmation dialog was shown to the end user. (This is only applicable when the `updateDialog` is used)
-* __codePush.SyncStatus.DOWNLOADING_PACKAGE__ *(7)* - An available update is being downloaded from the CodePush server.
+* __codePush.SyncStatus.DOWNLOADING_PACKAGE__ *(7)* - An available update is being downloaded from the Source Push service.
 * __codePush.SyncStatus.INSTALLING_UPDATE__ *(8)* - An available update was downloaded and is about to be installed.
 
 ##### UpdateState

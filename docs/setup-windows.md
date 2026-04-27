@@ -1,6 +1,6 @@
 ## Windows Setup
 
-Once you've acquired the Source Push plugin, you need to integrate it into the Visual Studio project of your React Native app and configure it correctly. To do this, take the following steps:
+Once you've acquired the Source Push SDK, you need to integrate it into the Visual Studio project of your React Native app and configure it correctly. To do this, take the following steps:
 
 ### Plugin Installation and Configuration for React Native Windows 0.63.6 version and above
 
@@ -66,7 +66,7 @@ protected override void OnLaunched(LaunchActivatedEventArgs e)
 
    ![Add Project](https://cloud.githubusercontent.com/assets/116461/14467164/ddf6312e-008e-11e6-8a10-44a8b44b5dfc.PNG)
 
-3. Browse to the `node_modules\react-native-code-push\windows` directory, select the `CodePush.csproj` file and click `OK`
+3. Browse to the `node_modules\@srcpush\react-native-code-push\windows` directory, select the `CodePush.csproj` file and click `OK`
 
 4. Back in the `Solution Explorer`, right-click the project node that is named after your app, and select the `Add -> Reference...` menu item
 
